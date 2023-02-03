@@ -1,7 +1,20 @@
 import abc
+import json
 import pathlib
 from random import shuffle
 from typing import NoReturn
+
+from config import PACKAGE_FOLDER, TARGETS_FOLDER
+
+
+def dump_factories_file(model: dict):
+    with open(pathlib.Path(PACKAGE_FOLDER, 'factories.json'), 'w') as file:
+        json.dump(model, file)
+
+
+def get_factories_file():
+    with open(pathlib.Path(PACKAGE_FOLDER, 'factories.json'), 'rb') as file:
+        return json.load(file)
 
 
 class Pool(abc.ABC):
@@ -35,7 +48,9 @@ class Pool(abc.ABC):
 
 
 class FilePool(Pool):
-    path = pathlib.Path()
+
+    def info(self) -> dict:
+        return {'amount': len(self), 'lang': self.lang}
 
     def pop(self) -> str:
         if len(self.pool) == 0:
@@ -43,7 +58,9 @@ class FilePool(Pool):
         value = self.pool.pop()
         return value
 
-    def __init__(self):
+    def __init__(self, path, lang):
+        self.lang = lang
+        self.path = path
         if not self.path.exists():
             self.path.write_text('')
         self.reload()
@@ -65,8 +82,18 @@ class FilePool(Pool):
 
 class Factories:
 
+    def keys(self):
+        return self.factories.keys()
+
     def __init__(self):
-        ...
+        self.reload_pools()
+
+    def reload_pools(self):
+        items = get_factories_file().items()
+        self.factories = {key: FilePool(pathlib.Path(TARGETS_FOLDER, value['filename']), value['lang']) for key, value in items}
 
     def get(self, pool: str):
-        ...
+        return self.factories.get(pool)
+
+    def items(self) -> list[tuple[str, FilePool]]:
+        return self.factories.items()

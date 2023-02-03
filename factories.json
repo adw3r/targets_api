@@ -1,34 +1,34 @@
 {
-  "targets": {
-    "alotof": {
-      "filename": "test_alotof.csv",
-      "lang": "ru"
-    },
-    "dadru": {
-      "filename": "test_dadru.csv",
-      "lang": "ru"
-    },
-    "dbr": {
-      "filename": "test_dobro_normalized.csv",
-      "lang": "ru"
-    },
-    "rub36": {
-      "filename": "test_rub36.csv",
-      "lang": "ru"
-    },
-    "turk": {
-      "filename": "test_all_turk.csv",
-      "lang": "tr"
-    },
-    "pobcasn23": {
-      "filename": "test_pobcasn23.csv",
-      "lang": "ru",
-    "fkasn23": {
-      "filename": "test_fkasn23.csv",
-      "lang": "eng"
-    "g11mp2": {
-      "filename": "test_G11MP2_RU.csv",
-      "lang": "eng"
-    }
+  "alotof": {
+    "filename": "test_alotof.csv",
+    "lang": "ru"
   },
+  "dadru": {
+    "filename": "test_dadru.csv",
+    "lang": "ru"
+  },
+  "dbru": {
+    "filename": "test_dbru.csv",
+    "lang": "ru"
+  },
+  "rub36": {
+    "filename": "test_rub36.csv",
+    "lang": "ru"
+  },
+  "turk": {
+    "filename": "test_turk.csv",
+    "lang": "tr"
+  },
+  "pobcasn23": {
+    "filename": "test_pobcasn23.csv",
+    "lang": "ru"
+  },
+  "fkasn23": {
+    "filename": "test_fkasn23.csv",
+    "lang": "eng"
+  },
+  "g11mp2": {
+    "filename": "test_g11mp2.csv",
+    "lang": "eng"
+  }
 }

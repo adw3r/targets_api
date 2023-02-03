@@ -3,7 +3,7 @@ from fastapi import FastAPI, Response
 from starlette.responses import RedirectResponse
 
 from config import HOST, PORT
-from pools import FilePool, Factories
+from module.pools import FilePool, Factories
 
 app = FastAPI()
 factories = Factories()
@@ -11,58 +11,38 @@ factories = Factories()
 
 @app.get('/')
 async def get_root():
-    return RedirectResponse('/docs')
+    return RedirectResponse('/targets')
 
 
 @app.get('/targets')
-async def get_factories():
-    factory_instance = factories.get('targets')
-    if factory_instance:
-        return {key: item.info() for key, item in factory_instance.items()}
+async def get_factories(method: str = 'info'):
+    match method:
+        case 'info':
+            return {key: item.info() for key, item in factories.items()}
+        case 'reload':
+            factories.reload_pools()
+            return RedirectResponse('/targets')
 
 
 @app.get('/targets/{pool}')
-async def get_factory_pools(pool: str):
-    factory_instance = factories.get('targets')
-    if factory_instance:
-        target_pool: FilePool = factory_instance[pool]
-        info = target_pool.info()
-        return info
-
-
-@app.get('/targets/{pool}/pool')
-async def get_pool_list(pool: str):
-    factory_instance = factories.get('targets')
-    if factory_instance:
-        proxy_pool: FilePool = factory_instance[pool]
-        return Response(content='\n'.join(proxy_pool.get_pool()))
-
-
-@app.get('/targets/{pool}/pop')
-async def pop_from_pool(pool: str):
-    factory_instance = factories.get('targets')
-    if factory_instance:
-        target_pool: FilePool = factory_instance[pool]
-        value = target_pool.pop()
-        return Response(content=value)
-
-
-@app.get('/targets/{pool}/clear')
-async def clear_pool(pool: str):
-    factory_instance = factories.get('targets')
-    if factory_instance:
-        target_pool: FilePool = factory_instance[pool]
-        target_pool.clear()
-        return target_pool.info()
-
-
-@app.get('/targets/{pool}/reload')
-async def reload_pool(pool: str):
-    factory_instance = factories.get('targets')
-    if factory_instance:
-        target_pool: FilePool = factory_instance[pool]
-        target_pool.reload()
-        return target_pool.info()
+async def get_factory_pool(pool: str, method: str = 'info'):
+    proxy_pool: FilePool = factories.get(pool)
+    match method:
+        case 'info':
+            info = proxy_pool.info()
+            return info
+        case 'pool':
+            pool = proxy_pool.get_pool()
+            return Response(content='\n'.join(pool))
+        case 'pop':
+            value = proxy_pool.pop()
+            return Response(content=value)
+        case 'clear':
+            proxy_pool.clear()
+            return RedirectResponse(f'/targets/{pool}')
+        case 'reload':
+            proxy_pool.reload()
+            return RedirectResponse(f'/targets/{pool}')
 
 
 if __name__ == '__main__':

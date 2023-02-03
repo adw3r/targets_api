@@ -15,8 +15,6 @@ def save_database(path: Path | str, list_to_save: list):
 
 def main():
     files = (
-        'fkasn23.csv',
-        'pobcasn23.csv',
     )
     for file in files:
         print(file)
