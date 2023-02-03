@@ -15,6 +15,14 @@ def save_database(path: Path | str, list_to_save: list):
 
 def main():
     files = (
+        'turk.csv',
+        'rub36.csv',
+        'pobcasn23.csv',
+        'alotof.csv',
+        'g11mp2.csv',
+        'dbru.csv',
+        'fkasn23.csv',
+        'dadru.csv',
     )
     for file in files:
         print(file)
