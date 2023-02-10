@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI, Response
 from starlette.responses import RedirectResponse
 
-from config import HOST, PORT
+from config import HOST, PORT, DEBUG
 from module.pools import FilePool, Factories
 
 app = FastAPI()
@@ -46,4 +46,4 @@ async def get_factory_pool(pool: str, method: str = 'info'):
 
 
 if __name__ == '__main__':
-    uvicorn.run('main:app', host=HOST, port=int(PORT))
+    uvicorn.run('main:app', host=HOST, port=int(PORT), reload=DEBUG)
