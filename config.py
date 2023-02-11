@@ -15,7 +15,7 @@ if not TARGETS_FOLDER.exists():
 config = configparser.ConfigParser()
 config.read(pathlib.Path(PACKAGE_FOLDER, 'config.ini'))
 
-config['general']['DEBUG'] = os.environ.get('DEBUG', False)
+config['general']['DEBUG'] = os.environ.get('DEBUG', 'False')
 DEBUG = config['general'].getboolean('DEBUG')
 
 if not DEBUG:
