@@ -63,7 +63,7 @@ class FilePool(Pool):
         self.path = path
         if not self.path.exists():
             self.path.write_text('')
-        self.reload()
+        # self.reload()
 
     def get_pool(self) -> list:
         self.reload()
