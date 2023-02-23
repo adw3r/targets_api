@@ -1,3 +1,6 @@
+import sqlite3
+
+import pandas as pd
 from pathlib import Path
 
 from config import TARGETS_FOLDER
@@ -11,6 +14,39 @@ def get_database(path: Path | str):
 def save_database(path: Path | str, list_to_save: list):
     with open(path, 'w', encoding='latin-1') as f:
         f.write('\n'.join(list_to_save))
+
+
+def to_sql():
+    dbs = [
+        'test_alotof.csv',
+        'test_dadru.csv',
+        'test_dbru.csv',
+        'test_fkasn23.csv',
+        'test_g11mp2.csv',
+        'test_pobcasn23.csv',
+        'test_rub36.csv',
+        'test_turk.csv',
+    ]
+
+    for db in dbs:
+        db_path = db
+        db_name = db.removesuffix('.csv').removeprefix('test_')
+        print(db_name)
+        create_table_query = f'''
+--         CREATE TABLE if not exists emails (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, email ANY, status TEXT default NULL, utm_source TEXT
+        # )'''
+
+        with sqlite3.connect(r'C:\Users\Administrator\Desktop\targets_api\my_data.db') as connection:
+            cursor = connection.cursor()
+            # cursor.execute(create_table_query)
+            users = pd.read_csv(rf'C:\Users\Administrator\Desktop\targets_api\targets\{db_path}',
+                                names=['email', 'is_available', 'source'], on_bad_lines=lambda d: print(d),
+                                engine='python')
+            users['source'] = db_name
+            users['is_available'] = True
+            users.to_sql('emails', connection, if_exists='append', index=False, dtype={'email': 'TEXT'})
+            print('success!')
 
 
 def main():
@@ -40,4 +76,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    to_sql()

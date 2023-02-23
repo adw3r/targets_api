@@ -1,48 +1,53 @@
+import fastapi
 import uvicorn
 from fastapi import FastAPI, Response
 from starlette.responses import RedirectResponse
 
+import module.services as _services
 from config import HOST, PORT, DEBUG
-from module.pools import FilePool, Factories
+from module.database import _orm
+from module.pools import Factories
+from module.services import create_database
 
 app = FastAPI()
 factories = Factories()
+create_database()
+
+
+@app.get('/targets')
+async def get_factories(method: str = 'info', db: _orm.Session = fastapi.Depends(_services.get_db)):
+    match method:
+        case 'info':
+            info = await _services.get_all_sources_info(db)
+            return info
+        # case 'reload':
+        #     await factories.reload_pools()
+        #     return RedirectResponse('/targets')
+
+
+@app.get('/targets/{pool}')
+async def test(pool: str, method: str = 'info', db: _orm.Session = fastapi.Depends(_services.get_db)):
+    match method:
+        case 'info':
+            info = await _services.info(db, pool)
+            return info
+        case 'pool':
+            pool = await _services.get_pool(db, pool)
+            return Response(content='\n'.join(pool))
+        case 'pop':
+            email = await _services.get_email_from_pool(db, pool)
+            return Response(content=email.email)
+        case 'clear':
+            await _services.clear(db, pool)
+            return RedirectResponse(f'/targets/{pool}')
+        case 'reload':
+            await _services.reload(db, pool)
+            return RedirectResponse(f'/targets/{pool}')
 
 
 @app.get('/')
 async def get_root():
     return RedirectResponse('/targets')
-
-
-@app.get('/targets')
-async def get_factories(method: str = 'info'):
-    match method:
-        case 'info':
-            return {key: item.info() for key, item in factories.items()}
-        case 'reload':
-            factories.reload_pools()
-            return RedirectResponse('/targets')
-
-
-@app.get('/targets/{pool}')
-async def get_factory_pool(pool: str, method: str = 'info'):
-    proxy_pool: FilePool = factories.get(pool)
-    match method:
-        case 'info':
-            info = proxy_pool.info()
-            return info
-        case 'pool':
-            pool = proxy_pool.get_pool()
-            return Response(content='\n'.join(pool))
-        case 'pop':
-            value = proxy_pool.pop()
-            return Response(content=value)
-        case 'clear':
-            proxy_pool.clear()
-            return RedirectResponse(f'/targets/{pool}')
-        case 'reload':
-            proxy_pool.reload()
-            return RedirectResponse(f'/targets/{pool}')
 
 
 if __name__ == '__main__':
