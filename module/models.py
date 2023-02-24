@@ -15,6 +15,9 @@ class Source(_database.Base):
     def to_dict(self):
         return {'lang': self.lang}
 
+    def __repr__(self):
+        return f'Source(name={self.name}, lang={self.lang})'
+
 
 class Email(_database.Base):
     __tablename__ = 'emails'
@@ -25,3 +28,6 @@ class Email(_database.Base):
     is_available = _sql.Column(_sql.Boolean, default=True, nullable=False)
 
     source_ref = _orm.Relationship('Source', back_populates='emails')
+
+    def __repr__(self):
+        return f'Email(id={self.id}, email={self.email}, source={self.source}, is_available={self.is_available})'
