@@ -1,4 +1,4 @@
-import asyncio
+import pickle
 import logging
 from typing import Type
 
@@ -6,6 +6,11 @@ import sqlalchemy.orm as _orm
 
 import module.database as _database
 import module.models as _models
+import redis
+import config
+
+REDIS_CLI = redis.Redis(config.REDIS_HOST)
+REDIS_CLI.ping()
 
 
 def create_database():
@@ -22,25 +27,42 @@ def get_db() -> _database.SessionLocal:
         db.close()
 
 
-def get_available_email_from_pool(db: _orm.Session, pool: str) -> Type[_models.Email]:
+def get_available_email_from_pool(db: _orm.Session, pool: str) -> Type[_models.Email]:  # fixme
+    all_emails = get_all_available_emails(db, pool)
     available_email = None
-
-    all_emails = db.query(_models.Email).filter_by(source=pool)  # todo cached somehow
     while available_email is None:
-        available_email = all_emails.filter_by(is_available=True).first()  # .order_by(_models.Email.is_available.desc())
-        if available_email is None:
-            all_emails.update({'is_available': True})
+        available_email = all_emails[0]
+        # if available_email is None:
+        #     all_emails.update({'is_available': True})
 
-    available_email.is_available = False
-    db.commit()
+    # available_email.is_available = False
+    # db.commit()
     return available_email
 
 
-def get_all_sources_info(db: _orm.Session) -> dict:
+def get_all_available_emails(db, pool):
+    all_emails = REDIS_CLI.get(f'all_emails_{pool}')
+    if all_emails:
+        print('getting cached')
+        all_emails = pickle.loads(all_emails)
+        return all_emails
+    else:
+        print('getting from sqlite')
+        all_emails = db.query(_models.Email).filter_by(source=pool, is_available=True).limit(1000).all()
+        REDIS_CLI.set(f'all_emails_{pool}', pickle.dumps(all_emails), ex=10)
+        return all_emails
+
+
+def get_all_sources_info(db: _orm.Session):
+    return_dict = REDIS_CLI.get('return_dict')
+    if return_dict:
+        return pickle.loads(return_dict)
+
     sources = db.query(_models.Source).all()
     return_dict = {}
     for source in sources:
         return_dict[source.name] = info(db, source.name)
+    REDIS_CLI.set('return_dict', pickle.dumps(return_dict), ex=60*60*1)
     return return_dict
 
 

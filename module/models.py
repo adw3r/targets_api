@@ -12,9 +12,6 @@ class Source(_database.Base):
 
     emails = _orm.Relationship('Email', back_populates='source_ref')
 
-    class Config:
-        orm_mode = True
-
     def to_dict(self):
         return {'lang': self.lang}
 
@@ -34,6 +31,3 @@ class Email(_database.Base):
 
     def __repr__(self):
         return f'Email(id={self.id}, email={self.email}, source={self.source}, is_available={self.is_available})'
-
-    class Config:
-        orm_mode = True

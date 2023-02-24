@@ -1,6 +1,12 @@
+import os
+
 import fastapi
 import uvicorn
 from fastapi import FastAPI, Response
+from fastapi import Request
+from fastapi.encoders import jsonable_encoder
+from fastapi_redis_cache import FastApiRedisCache
+from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 
 import module.services as _services
@@ -13,11 +19,9 @@ create_database()
 
 
 @app.get('/targets')
-async def get_factories(method: str = 'info', db: _orm.Session = fastapi.Depends(_services.get_db)):
-    match method:
-        case 'info':  # todo speedup with cached response
-            info = _services.get_all_sources_info(db)
-            return info
+async def get_factories(db: _orm.Session = fastapi.Depends(_services.get_db)):
+    info: dict = _services.get_all_sources_info(db)
+    return info
 
 
 @app.get('/targets/{pool}')

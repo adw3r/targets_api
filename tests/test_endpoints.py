@@ -7,7 +7,7 @@ from config import PORT
 
 
 def check_target(_):
-    resp = httpx.get('http://localhost:%s/targets/test' % PORT, params={'method': 'pop'}, timeout=60).text
+    resp = httpx.get('http://localhost:%s/targets/turk' % PORT, params={'method': 'pop'}, timeout=60).text
     print(resp)
     return '@' in resp
 
@@ -22,15 +22,15 @@ class TestEndpoints(TestCase):
         self.assertTrue(success_)
 
     def test_targets_pool(self):
-        params = {'method': 'pool', 'limit': '10'}
-        resp = httpx.get('http://localhost:%s/targets/test' % PORT, params=params).text.splitlines()
+        params = {'method': 'pool', 'limit': '100'}
+        resp = httpx.get('http://localhost:%s/targets/turk' % PORT, params=params).text.splitlines()
         for line in resp:
             print(line)
             self.assertTrue('@' in line)
 
     def test_get_info(self):
         params = {'method': 'info'}
-        resp = httpx.get('http://localhost:%s/targets/test' % PORT, params=params).json()
+        resp = httpx.get('http://localhost:%s/targets/turk' % PORT, params=params).json()
         print(resp)
         self.assertTrue(resp['lang'] is not None)
         self.assertTrue(resp['amount'] is not None)
