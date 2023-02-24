@@ -18,9 +18,6 @@ async def get_factories(method: str = 'info', db: _orm.Session = fastapi.Depends
         case 'info':  # todo tests
             info = await _services.get_all_sources_info(db)  # todo tests
             return info
-        # case 'reload':
-        #     await factories.reload_pools()
-        #     return RedirectResponse('/targets')
 
 
 @app.get('/targets/{pool}')
@@ -33,7 +30,7 @@ async def test(pool: str, method: str = 'info', limit: int = 100, db: _orm.Sessi
             pool = _services.get_pool(db, pool, limit=limit)
             return Response(content='\n'.join([email.email for email in pool]))
         case 'pop':  # todo tests
-            email = _services.get_email_from_pool(db, pool)
+            email = _services.get_available_email_from_pool(db, pool)
             return Response(content=email.email)
 
 

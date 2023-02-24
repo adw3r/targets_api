@@ -7,7 +7,7 @@ from config import PORT
 
 
 def check_target(_):
-    resp = httpx.get('http://localhost:%s/targets/turk' % PORT, params={'method': 'pop'}).text
+    resp = httpx.get('http://localhost:%s/targets/g11mp2' % PORT, params={'method': 'pop'}, timeout=60).text
     print(resp)
     return '@' in resp
 
@@ -20,18 +20,22 @@ class TestEndpoints(TestCase):
         self.assertTrue(success < 400)
 
     def test_targets_pool(self):
-        resp = httpx.get('http://localhost:%s/targets/turk' % PORT, params={'method': 'pool'}).text.splitlines()
+        params = {'method': 'pool', 'limit': '10'}
+        resp = httpx.get('http://localhost:%s/targets/turk' % PORT, params=params).text.splitlines()
         for line in resp:
             print(line)
             self.assertTrue('@' in line)
 
     def test_get_info(self):
-        resp = httpx.get('http://localhost:%s/targets/turk' % PORT, params={'method': 'info'}).json()
+        params = {'method': 'info'}
+        resp = httpx.get('http://localhost:%s/targets/turk' % PORT, params=params).json()
         print(resp)
         self.assertTrue(resp['lang'] is not None)
-        self.assertTrue(resp['available'] is not None)
+        self.assertTrue(resp['amount'] is not None)
 
     def test_pop_target(self):  # 4 multithreaded
-        with ThreadPoolExecutor(200) as worker:
-            results = [res for res in worker.map(check_target, [_ for _ in range(1000)])]
-        print(results)
+        threads_amount = 50
+        with ThreadPoolExecutor(threads_amount) as worker:
+            results = [res for res in worker.map(check_target, [_ for _ in range(threads_amount)])]
+        for res in results:
+            self.assertTrue(res)

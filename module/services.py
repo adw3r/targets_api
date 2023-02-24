@@ -22,17 +22,18 @@ def get_db() -> _database.SessionLocal:
         db.close()
 
 
-def get_email_from_pool(db: _orm.Session, pool: str) -> Type[_models.Email]:
-    email = None
-    while email is None:
-        email = db.query(_models.Email).filter_by(is_available=True, source=pool).first()
-        if email:
-            email.is_available = False
-        else:
-            all_emails = db.query(_models.Email).filter_by(source=pool, is_available=False)
+def get_available_email_from_pool(db: _orm.Session, pool: str) -> Type[_models.Email]:
+    available_email = None
+
+    all_emails = db.query(_models.Email).filter_by(source=pool)  # todo cached somehow
+    while available_email is None:
+        available_email = all_emails.filter_by(is_available=True).first()  # .order_by(_models.Email.is_available.desc())
+        if available_email is None:
             all_emails.update({'is_available': True})
+
+    available_email.is_available = False
     db.commit()
-    return email
+    return available_email
 
 
 def get_all_sources_info(db: _orm.Session):  # fixme todo test
@@ -49,5 +50,5 @@ def get_pool(db: _orm.Session, pool: str, limit: int) -> list[Type[_models.Email
 
 def info(db: _orm.Session, pool: str):
     source_info: dict = db.query(_models.Source).get(pool).to_dict()
-    source_info['available'] = db.query(_models.Email).filter_by(is_available=True, source=pool).count()
+    source_info['amount'] = db.query(_models.Email).filter_by(is_available=True, source=pool).count()
     return source_info
