@@ -46,18 +46,6 @@ async def info(db: _orm.Session, pool: str):
     return source_info
 
 
-async def clear(db: _orm.Session, pool: str):
-    all_emails = db.query(_models.Email).filter_by(source=pool)
-    all_emails.update({'is_available': False})
-    db.commit()
-
-
-async def reload(db: _orm.Session, pool: str):
-    all_emails = db.query(_models.Email).filter_by(source=pool)
-    all_emails.update({'is_available': True})
-    db.commit()
-
-
 async def get_all_sources_info(db: _orm.Session):
     sources = db.query(_models.Source).all()
     results = asyncio.gather(*[asyncio.create_task(info(db, source.name)) for source in sources])

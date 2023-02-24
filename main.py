@@ -37,12 +37,6 @@ async def test(pool: str, method: str = 'info', db: _orm.Session = fastapi.Depen
         case 'pop':
             email = await _services.get_email_from_pool(db, pool)
             return Response(content=email.email)
-        case 'clear':
-            await _services.clear(db, pool)
-            return RedirectResponse(f'/targets/{pool}')
-        case 'reload':
-            await _services.reload(db, pool)
-            return RedirectResponse(f'/targets/{pool}')
 
 
 @app.get('/')
