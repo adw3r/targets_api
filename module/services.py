@@ -28,29 +28,30 @@ def get_db() -> _database.SessionLocal:
 
 
 def get_available_email_from_pool(db: _orm.Session, pool: str) -> Type[_models.Email]:  # fixme
-    all_emails = get_all_available_emails(db, pool)
-    available_email = None
-    while available_email is None:
-        available_email = all_emails[0]
-        # if available_email is None:
-        #     all_emails.update({'is_available': True})
-
-    # available_email.is_available = False
-    # db.commit()
+    all_emails: list = get_all_available_emails(db, pool)
+    available_email: Type[_models.Email] = all_emails.pop()
+    REDIS_CLI.set(f'all_emails_{pool}', pickle.dumps(all_emails))
     return available_email
 
 
-def get_all_available_emails(db, pool):
+def get_all_available_emails(db: _orm.Session, pool) -> list:
     all_emails = REDIS_CLI.get(f'all_emails_{pool}')
     if all_emails:
         print('getting cached')
         all_emails = pickle.loads(all_emails)
-        return all_emails
     else:
-        print('getting from sqlite')
-        all_emails = db.query(_models.Email).filter_by(source=pool, is_available=True).limit(1000).all()
-        REDIS_CLI.set(f'all_emails_{pool}', pickle.dumps(all_emails), ex=10)
-        return all_emails
+        all_emails = get_pool(db, pool, 00)
+    print(f'all emails len is {len(all_emails)}')
+    REDIS_CLI.set(f'all_emails_{pool}', pickle.dumps(all_emails))
+    return all_emails
+
+
+def get_emails_from_db(db: _orm.Session, pool: str):
+    print('getting from sqlite')
+    all_emails = db.query(_models.Email).filter_by(source=pool, is_available=True).all()
+    all_emails.update({'is_available': False})
+    db.commit()
+    return all_emails
 
 
 def get_all_sources_info(db: _orm.Session):

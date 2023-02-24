@@ -7,7 +7,7 @@ class TestServices(unittest.TestCase):
 
     def setUp(self) -> None:
         self.session = next(services.get_db())
-        self.source = 'turk'
+        self.source = 'test'
         self.limit = 10000
 
     def test_get_info(self):
