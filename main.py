@@ -15,8 +15,8 @@ create_database()
 @app.get('/targets')
 async def get_factories(method: str = 'info', db: _orm.Session = fastapi.Depends(_services.get_db)):
     match method:
-        case 'info':  # todo tests
-            info = await _services.get_all_sources_info(db)  # todo tests
+        case 'info':  # todo speedup with cached response
+            info = _services.get_all_sources_info(db)
             return info
 
 
@@ -29,12 +29,12 @@ async def test(pool: str, method: str = 'info', limit: int = 100, db: _orm.Sessi
         case 'pool':
             pool = _services.get_pool(db, pool, limit=limit)
             return Response(content='\n'.join([email.email for email in pool]))
-        case 'pop':  # todo tests
+        case 'pop':  # todo speedup with cached response
             email = _services.get_available_email_from_pool(db, pool)
             return Response(content=email.email)
 
 
-@app.get('/')
+@app.get('/', response_class=RedirectResponse)
 async def get_root():
     return RedirectResponse('/targets')
 

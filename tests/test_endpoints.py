@@ -41,3 +41,11 @@ class TestEndpoints(TestCase):
             results = [res for res in worker.map(check_target, [_ for _ in range(threads_amount)])]
         for res in results:
             self.assertTrue(res)
+
+    def test_get_all_sources_info(self):
+        params = {'method': 'info'}
+        infos: dict = httpx.get('http://localhost:%s/targets' % PORT, params=params).json()
+        print(infos)
+        for info in infos.values():
+            self.assertTrue(info['lang'] is not None)
+            self.assertTrue(info['amount'] is not None)

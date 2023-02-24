@@ -27,3 +27,9 @@ class TestServices(unittest.TestCase):
             email = services.get_available_email_from_pool(self.session, self.source)
             print(email)
             self.assertTrue(issubclass(models.Email, type(email)))
+
+    def test_get_all_sources_info(self):
+        infos: dict = services.get_all_sources_info(self.session)
+        for info in infos.values():
+            self.assertTrue(info['lang'] is not None)
+            self.assertTrue(info['amount'] is not None)
