@@ -1,0 +1,17 @@
+{
+
+  "dadru": {
+    "filename": "test_dadru.csv",
+    "lang": "ru"
+  },
+  "dbru": {
+    "filename": "test_dbru.csv",
+    "lang": "ru"
+  },
+  "rub36": {
+    "filename": "test_rub36.csv",
+    "lang": "ru"
+  },
+
+
+}

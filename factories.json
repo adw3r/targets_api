@@ -1,36 +1,4 @@
 {
-  "alotof": {
-    "filename": "test_alotof.csv",
-    "lang": "ru"
-  },
-  "dadru": {
-    "filename": "test_dadru.csv",
-    "lang": "ru"
-  },
-  "dbru": {
-    "filename": "test_dbru.csv",
-    "lang": "ru"
-  },
-  "rub36": {
-    "filename": "test_rub36.csv",
-    "lang": "ru"
-  },
-  "turk": {
-    "filename": "test_turk.csv",
-    "lang": "tr"
-  },
-  "pobcasn23": {
-    "filename": "test_pobcasn23.csv",
-    "lang": "ru"
-  },
-  "fkasn23": {
-    "filename": "test_fkasn23.csv",
-    "lang": "eng"
-  },
-  "g11mp2": {
-    "filename": "test_g11mp2.csv",
-    "lang": "ru"
-  },
   "bognewge": {
     "filename": "test_bognewge.csv",
     "lang": "ge"
