@@ -30,5 +30,17 @@
   "g11mp2": {
     "filename": "test_g11mp2.csv",
     "lang": "ru"
+  },
+  "bognewge": {
+    "filename": "test_bognewge.csv",
+    "lang": "ge"
+  },
+  "bognewtot": {
+    "filename": "test_bognewtot.csv",
+    "lang": "eng"
+  },
+  "bognewuk": {
+    "filename": "test_bognewuk.csv",
+    "lang": "eng"
   }
 }
