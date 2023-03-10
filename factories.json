@@ -1,14 +1,6 @@
 {
-  "bognewge": {
-    "filename": "test_bognewge.csv",
-    "lang": "ge"
-  },
-  "bognewtot": {
-    "filename": "test_bognewtot.csv",
-    "lang": "eng"
-  },
-  "bognewuk": {
-    "filename": "test_bognewuk.csv",
-    "lang": "eng"
+  "pobcasn23": {
+    "filename": "test_pobcasn23.csv",
+    "lang": "ru"
   }
 }
