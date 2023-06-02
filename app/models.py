@@ -95,10 +95,6 @@ class Bitly(Base):
     created_at: Mapped[str] = mapped_column(String, nullable=False)
     link: Mapped[str] = mapped_column(VARCHAR(22), nullable=False)
 
-    # donor: Mapped[str] = mapped_column(String, nullable=True)
-    # targets_source: Mapped[str] = mapped_column(String, nullable=True)
-    # referral_name: Mapped[str] = mapped_column(String, nullable=True)
-
     def to_dict(self):
         return {
             'link_id': self.link_id,

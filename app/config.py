@@ -2,9 +2,8 @@ import configparser
 import os
 import pathlib
 
-from dotenv import load_dotenv
-
 import loguru
+from dotenv import load_dotenv
 
 load_dotenv()
 
