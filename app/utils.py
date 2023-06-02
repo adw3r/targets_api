@@ -1,8 +1,6 @@
 import asyncio
-import json
 import logging
 import os
-import time
 from pathlib import Path
 from random import choice
 from string import ascii_letters, digits
@@ -11,7 +9,7 @@ import httpx
 import sqlalchemy
 
 from app import config, database, models
-from app.config import PACKAGE_FOLDER, BITLY_KEY
+from app.config import BITLY_KEY
 from app.config import TARGETS_FOLDER
 
 
