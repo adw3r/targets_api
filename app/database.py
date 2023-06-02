@@ -11,7 +11,7 @@ async_engine = create_async_engine(
     ASYNC_DB_URL,
     # echo=True,
 )
-sync_engine = create_engine(SYNC_DB_URL)
+sync_engine = create_engine(SYNC_DB_URL, pool_timeout=5)
 AsyncSessionFactory = sessionmaker(bind=async_engine, autoflush=False, expire_on_commit=False, class_=AsyncSession)
 SyncSessionFactory = sessionmaker(bind=sync_engine, expire_on_commit=False)
 
