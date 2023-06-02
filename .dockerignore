@@ -1,0 +1,11 @@
+/venv
+/postgres-data
+/redis
+/targets
+/migrations
+/tests
+alembic.ini
+docker-compose.yml
+Dockerfile
+.gitattributes
+.gitignore

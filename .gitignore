@@ -1,0 +1,9 @@
+/targets/
+/.env
+/my_data.db
+*.pyc
+/postgres-data/
+.idea
+/postgres-data.rar
+/targets.rar
+/redis/
