@@ -8,7 +8,7 @@ from app import utils, models, database
 
 router = APIRouter(
     prefix='/stats',
-    tags=['Stats api']
+    tags=['Stats']
 )
 
 

@@ -6,7 +6,7 @@ from app import models, database, cache, service
 
 router = APIRouter(
     prefix='/targets',
-    tags=['Targets api']
+    tags=['Targets']
 )
 
 

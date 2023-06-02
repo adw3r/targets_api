@@ -8,7 +8,7 @@ from app.config import logger
 
 router = APIRouter(
     prefix='/bitly',
-    tags=['Bitly api']
+    tags=['Bitly']
 )
 
 

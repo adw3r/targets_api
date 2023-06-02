@@ -5,7 +5,7 @@ from app import models, database, service, schemas
 
 router = APIRouter(
     prefix='/referrals',
-    tags=['Referrals api']
+    tags=['Referrals']
 )
 
 

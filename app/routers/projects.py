@@ -7,7 +7,7 @@ from app import models, database, schemas
 
 router = APIRouter(
     prefix='/projects',
-    tags=['Spam Projects api']
+    tags=['Donors']
 )
 
 

@@ -6,7 +6,7 @@ from app import schemas, models, database
 
 router = APIRouter(
     prefix='/texts',
-    tags=['Text api']
+    tags=['Texts']
 )
 
 
