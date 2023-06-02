@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 COPY ./app ./app
 COPY config.ini .
 
-CMD uvicorn app.main:app --host=$HOST --port=$PORT --workers 5
+CMD uvicorn app.main:app --host=$HOST --port=$PORT
