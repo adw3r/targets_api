@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.get('/stats')
+@router.get('')
 async def get_stats(db_session: AsyncSession = Depends(database.create_async_session)):
     all_spam_donors = await db_session.scalars(select(models.SpamDonor))
     results = await asyncio.gather(*[asyncio.create_task(utils.get_link_summary(donor.prom_link)) for donor in
