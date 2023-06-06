@@ -65,7 +65,7 @@ def check_that_cache_is_not_empty():
                                 name=source.source_name)
                 thread.start()
                 active_threads.append(thread)
-        time.sleep(10)
+        time.sleep(2)
 
 
 if __name__ == '__main__':
