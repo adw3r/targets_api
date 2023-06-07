@@ -1,6 +1,8 @@
 import asyncio
 import logging
 import os
+import re
+from dataclasses import dataclass
 from pathlib import Path
 from random import choice
 from string import ascii_letters, digits
@@ -36,7 +38,7 @@ async def create_link(link_to_short) -> httpx.Response:
         return response
 
 
-async def get_link_summary(bitly_link: str) -> httpx.Response:
+async def get_link_summary(bitly_link: str, time_unit: str = 'month') -> dict:
     '''
 
     :param bitly_link: format of bit.ly/3oB8qmJ
@@ -46,9 +48,10 @@ async def get_link_summary(bitly_link: str) -> httpx.Response:
         'Authorization': f'Bearer {BITLY_KEY}',
     }
     async with httpx.AsyncClient() as client:
-        response = await client.get(f'https://api-ssl.bitly.com/v4/bitlinks/{bitly_link}/clicks/summary?unit=month',
-                                    headers=headers)
-        return response
+        response = await client.get(
+            f'https://api-ssl.bitly.com/v4/bitlinks/{bitly_link}/clicks/summary?unit={time_unit}',
+            headers=headers)
+        return response.json()
 
 
 async def generate_text(length: int = 6, sequence=ascii_letters + digits):
@@ -69,10 +72,14 @@ async def get_link_from_bitly(utm_link: str, utm_source: str, utm_campaign: str,
     return response
 
 
-async def get_stats() -> dict:
+async def get_stats() -> list[dict]:
     async with httpx.AsyncClient() as cli:
         resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': '1488'})
         return resp.json()
+
+
+async def get_api_model_items(api_data: list[dict]):
+    return [models.ApiDataRow(**api_row) for api_row in api_data]
 
 
 async def async_main():
@@ -157,6 +164,16 @@ def sync_main():
         except Exception as error:
             print(error)
             os.remove(file)
+
+
+@dataclass
+class regex_in:
+    string: str
+
+    def __eq__(self, other: str | re.Pattern):
+        if isinstance(other, str):
+            other = re.compile(other)
+        return other.search(self.string) is not None
 
 
 if __name__ == '__main__':

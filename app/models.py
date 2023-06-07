@@ -1,4 +1,6 @@
-from sqlalchemy import String, ForeignKey, Integer
+from datetime import datetime
+
+from sqlalchemy import String, ForeignKey, Integer, DateTime
 from sqlalchemy.dialects.postgresql import VARCHAR, SMALLINT, INTEGER, BOOLEAN
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column, Mapped
 
@@ -140,22 +142,40 @@ class SpamDonor(Base):
         }
 
 
-class ApiDataRow:
-    __tablename__ = 'api_data'
+class ApiDataRow(Base):
+    __tablename__ = 'api_stats'
 
     id: Mapped[int] = mapped_column(INTEGER, primary_key=True, autoincrement=True)
-#
-#     brand: Mapped[str] = mapped_column(String)
-#     date: Mapped[DateTime] = mapped_column(DateTime)
-#     utm_source: Mapped[str] = mapped_column(String)
-#     utm_campaign: Mapped[str] = mapped_column(String)
-#     utm_term: Mapped[str] = mapped_column(String)
-#     utm_content: Mapped[str] = mapped_column(String)
-#     utm_medium: Mapped[str] = mapped_column(String)
-#     promo_code: Mapped[int] = mapped_column(INT)
-#     hits: Mapped[int] = mapped_column(INT)
-#     hosts: Mapped[int] = mapped_column(INT)
-#     registration: Mapped[int] = mapped_column(INT)
-#     new_users: Mapped[int] = mapped_column(INT)
-#     bots: Mapped[int] = mapped_column(INT)
-#     result: Mapped[int] = mapped_column(INT)
+
+    brand: Mapped[str] = mapped_column(String, nullable=True)
+    date: Mapped[DateTime] = mapped_column(DateTime, nullable=True)
+    utm_source: Mapped[str] = mapped_column(String, nullable=True)
+    utm_campaign: Mapped[str] = mapped_column(String, nullable=True)
+    utm_term: Mapped[str] = mapped_column(String, nullable=True)
+    utm_content: Mapped[str] = mapped_column(String, nullable=True)
+    utm_medium: Mapped[str] = mapped_column(String, nullable=True)
+    promo_code: Mapped[str] = mapped_column(String, nullable=True)
+    hits: Mapped[int] = mapped_column(SMALLINT, nullable=True)
+    hosts: Mapped[int] = mapped_column(SMALLINT, nullable=True)
+    registration: Mapped[int] = mapped_column(SMALLINT, nullable=True)
+    new_users: Mapped[int] = mapped_column(SMALLINT, nullable=True)
+    bots: Mapped[int] = mapped_column(SMALLINT, nullable=True)
+    result: Mapped[int] = mapped_column(SMALLINT, nullable=True)
+
+    def __init__(self, **kw):
+        kw['date'] = datetime.strptime(kw['date'], '%Y-%m-%d')
+        kw['hits'] = int(kw['hits'])
+        kw['hosts'] = int(kw['hosts'])
+        kw['registration'] = int(kw['registration'])
+        kw['new_users'] = int(kw['new_users'])
+        kw['bots'] = int(kw['bots'])
+        kw['result'] = int(kw['result'])
+        super().__init__(**kw)
+
+    def __repr__(self):
+        return f'ApiDataRow(utm_source' \
+               f'utm_campaign={self.utm_campaign}' \
+               f'utm_term={self.utm_term}' \
+               f'utm_content={self.utm_content}' \
+               f'utm_medium={self.utm_medium}' \
+               ')'

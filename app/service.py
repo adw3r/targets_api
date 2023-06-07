@@ -1,7 +1,58 @@
-from sqlalchemy import select, text
+import datetime
+
+from sqlalchemy import select, text, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models
+
+
+async def add_api_data(session: AsyncSession, data_objects: list[models.ApiDataRow]):
+    session.add_all(data_objects)
+    await session.commit()
+
+
+async def get_regs_stat_for_current_month(session: AsyncSession):
+    date = datetime.datetime.today()
+    res = await session.scalars(
+        select(models.ApiDataRow).filter(
+            func.date_trunc('month', models.ApiDataRow.date) == func.date_trunc('month', date),
+            # func.date_trunc('day', models.ApiDataRow.date) == func.date_trunc('day', date),
+            # func.date_trunc('year', models.ApiDataRow.date) == func.date_trunc('year', date),
+        )
+    )
+    return res.all()
+
+
+async def get_regs_stat_for_specific_date(session: AsyncSession, date):
+    date = datetime.datetime.strptime(date, '%Y-%m-%d')
+    res = await session.scalars(
+        select(models.ApiDataRow).where(
+            func.date_trunc('month', models.ApiDataRow.date) == func.date_trunc('month', date),
+            func.date_trunc('day', models.ApiDataRow.date) == func.date_trunc('day', date),
+            func.date_trunc('year', models.ApiDataRow.date) == func.date_trunc('year', date)
+        )
+    )
+    return res.all()
+
+
+async def get_regs_stat_for_today(session: AsyncSession):
+    res = await session.scalars(select(models.ApiDataRow).where(models.ApiDataRow.date == func.current_date()))
+    return res.all()
+
+
+async def get_api_data(session: AsyncSession) -> list[models.ApiDataRow]:
+    res = await session.scalars(select(models.ApiDataRow))
+    return res.all()
+
+
+async def get_all_links(session: AsyncSession) -> list[models.Bitly]:
+    links = await session.scalars(select(models.Bitly))
+    return links.all()
+
+
+async def delete_api_data(session: AsyncSession):
+    await session.execute(delete(models.ApiDataRow))
+    await session.commit()
 
 
 async def get_one_not_spammed_target_with_update(session: AsyncSession, source: models.Source, limit: int = 1):

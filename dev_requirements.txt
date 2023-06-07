@@ -1,3 +1,4 @@
+alembic==1.11.1
 anyio==3.7.0
 async-timeout==4.0.2
 asyncpg==0.27.0
@@ -18,6 +19,7 @@ iniconfig==2.0.0
 itsdangerous==2.1.2
 Jinja2==3.1.2
 loguru==0.7.0
+Mako==1.2.4
 MarkupSafe==2.1.2
 orjson==3.9.0
 packaging==23.1
@@ -26,6 +28,8 @@ psycopg==3.1.9
 psycopg-binary==3.1.9
 psycopg-pool==3.1.7
 pydantic==1.10.8
+pytest==7.3.1
+pytest-asyncio==0.21.0
 python-dotenv==1.0.0
 python-multipart==0.0.6
 PyYAML==6.0
