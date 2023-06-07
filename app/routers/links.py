@@ -53,9 +53,8 @@ async def create_link_straight(link, db_session: AsyncSession = Depends(database
 
 @router.get('/link/summary')
 async def get_link_summary(link_id, db_session: AsyncSession = Depends(database.create_async_session)):
-    result = await utils.get_link_summary(link_id)
+    result_json: dict = await utils.get_link_summary(link_id)
     bitly_instance = await db_session.scalar(select(models.Bitly).where(models.Bitly.link_id == link_id))
-    result_json = result.json()
     result_json.update(bitly_instance.to_dict())
     return result_json
 
