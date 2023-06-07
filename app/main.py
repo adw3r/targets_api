@@ -19,14 +19,12 @@ app.include_router(routers.texts.router)
 
 @app.on_event('startup')
 def startup():
-    if not DEBUG:
-        cache.create_cache()
+    cache.create_cache()
 
 
 @app.on_event('shutdown')
 def startup():
-    if not DEBUG:
-        cache.kill_cache()
+    cache.kill_cache()
 
 
 @app.get('/', tags=['root'])
