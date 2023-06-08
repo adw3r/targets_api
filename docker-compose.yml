@@ -4,6 +4,7 @@ services:
   targets-api:
     image: alexeynaidiuk/targets-api:latest
     build: .
+    restart: always
     ports:
       - "8181"
     networks:
@@ -33,6 +34,7 @@ services:
       - ./redis:/data
   nginx:
     image: nginx:latest
+    restart: always
     volumes:
       - ./nginx:/etc/nginx
     depends_on:
