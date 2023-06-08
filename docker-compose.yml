@@ -2,10 +2,10 @@ version: "3.8"
 
 services:
   targets-api:
-    image: alexeynaidiuk/targets-api:latest
+#    image: alexeynaidiuk/targets-api:latest
     build: .
     ports:
-      - "8181:8181"
+      - "8281"
     networks:
       - mynetwork
     env_file:
@@ -31,16 +31,16 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes:
       - ./redis:/data
-#  nginx:
-#    image: nginx:latest
-#    volumes:
-#      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-#    depends_on:
-#      - targets-api
-#    ports:
-#      - "8181:80"
-#    networks:
-#      - mynetwork
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - targets-api
+    ports:
+      - "8281:80"
+    networks:
+      - mynetwork
 networks:
   mynetwork:
     name: "mynetwork"
