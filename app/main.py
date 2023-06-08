@@ -6,7 +6,7 @@ from app import cache, routers
 from app.config import HOST, PORT, DEBUG
 
 app = FastAPI(
-    title='Email automation api'
+    title=f'Email automation api'
 )
 
 app.include_router(routers.links.router)
@@ -33,4 +33,4 @@ async def get_root():
 
 
 if __name__ == '__main__':
-    uvicorn.run('main:app', host=HOST, port=int(PORT), reload=DEBUG)
+    uvicorn.run('app.main:app', host=HOST, port=int(PORT), reload=DEBUG)

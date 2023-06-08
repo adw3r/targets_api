@@ -2,10 +2,10 @@ version: "3.8"
 
 services:
   targets-api:
-#    image: alexeynaidiuk/targets-api:latest
+    image: alexeynaidiuk/targets-api:latest
     build: .
     ports:
-      - "8281"
+      - "8181"
     networks:
       - mynetwork
     env_file:
@@ -38,7 +38,7 @@ services:
     depends_on:
       - targets-api
     ports:
-      - "8281:80"
+      - "8181:80"
     networks:
       - mynetwork
 networks:
