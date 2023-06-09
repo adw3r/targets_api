@@ -12,11 +12,11 @@ class Base(DeclarativeBase):
 class TargetEmail(Base):
     __tablename__ = 'target_emails'
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    email: Mapped[str] = mapped_column(String, nullable=False, index=True)
-    sent_counter: Mapped[int] = mapped_column(SMALLINT, nullable=True, index=True, default=0)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    email: Mapped[str] = mapped_column(String, nullable=False)
+    sent_counter: Mapped[int] = mapped_column(SMALLINT, nullable=True, default=0)
 
-    source_id: Mapped[int] = mapped_column(SMALLINT, ForeignKey('sources.id'), index=True)
+    source_id: Mapped[int] = mapped_column(SMALLINT, ForeignKey('sources.id'))
     source: Mapped["Source"] = relationship("Source", back_populates='targets', cascade='all')
 
     def __repr__(self):
@@ -35,11 +35,10 @@ class Source(Base):
     __tablename__ = 'sources'
 
     id: Mapped[int] = mapped_column(SMALLINT, primary_key=True, index=True)
-    source_name: Mapped[str] = mapped_column(VARCHAR(10), nullable=False)
+    source_name: Mapped[str] = mapped_column(VARCHAR(10), nullable=False, index=True)
     text_id: Mapped[int] = mapped_column(SMALLINT, ForeignKey('texts.id'), index=True)
 
     is_available: Mapped[bool] = mapped_column(BOOLEAN, nullable=False, default=True)
-    total_sent_counter: Mapped[int] = mapped_column(SMALLINT, default=0, nullable=False)
 
     text: Mapped["Text"] = relationship("Text", back_populates='source')
     targets: Mapped[list["TargetEmail"]] = relationship(
@@ -57,11 +56,20 @@ class Source(Base):
         }
 
 
+class SourceInfo(Base):
+    __tablename__ = 'sources_info'
+    id: Mapped[int] = mapped_column(SMALLINT, primary_key=True)
+
+    source_name: Mapped[str] = mapped_column(VARCHAR(40))
+    lang: Mapped[str] = mapped_column(VARCHAR(10))
+    amount: Mapped[int] = mapped_column(Integer)
+
+
 class Text(Base):
     __tablename__ = 'texts'
-    id: Mapped[int] = mapped_column(SMALLINT, primary_key=True)
-    text: Mapped[str] = mapped_column(String, nullable=False)
-    lang: Mapped[str] = mapped_column(VARCHAR(5), nullable=False)
+    id: Mapped[int] = mapped_column(SMALLINT, primary_key=True, index=True)
+    text: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    lang: Mapped[str] = mapped_column(VARCHAR(5), nullable=False, index=True)
 
     source: Mapped["Source"] = relationship("Source", back_populates='text')
 
