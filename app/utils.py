@@ -1,4 +1,3 @@
-import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -6,8 +5,7 @@ from random import choice
 from string import ascii_letters, digits
 
 import httpx
-import psycopg
-from sqlalchemy import select, text
+from sqlalchemy import select
 
 from app import database, models
 from app.config import BITLY_KEY, TARGETS_FOLDER, logger
