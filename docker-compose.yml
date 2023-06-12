@@ -11,6 +11,8 @@ services:
       - mynetwork
     env_file:
        - ".env"
+    volumes:
+      - ./targets:/targets
   db:
     image: postgres:latest
     networks:
