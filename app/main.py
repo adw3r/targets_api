@@ -5,9 +5,12 @@ from starlette.responses import RedirectResponse
 from app import cache, routers
 from app.config import HOST, PORT, DEBUG
 
-app = FastAPI(
-    title=f'Email automation api'
-)
+if DEBUG:
+    title = f'Email automation api DEBUG'
+else:
+    title = f'Email automation api'
+
+app = FastAPI(title=title)
 
 app.include_router(routers.links.router)
 app.include_router(routers.projects.router)

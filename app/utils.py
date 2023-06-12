@@ -1,3 +1,4 @@
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -102,7 +103,7 @@ def add_targets_to_db(source_name, lang, csv_file_name):
         file.write('\n'.join([f'{email},{source.id}' for email in new_emails]))
     logger.info(f'{temp_file_path}')
     copy_from_csv(temp_file_path)
-    # os.remove(temp_file_path)
+    os.remove(temp_file_path)
 
 
 def add_test_emails(emails_list: list, suffix) -> list:

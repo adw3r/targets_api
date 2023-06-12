@@ -1,13 +1,25 @@
-from fastapi import APIRouter, Depends, Response, HTTPException
+from pathlib import Path
+
+import aiofiles
+from fastapi import APIRouter, Depends, Response, HTTPException, File, UploadFile, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app import models, database, cache, service
+from app import models, database, cache, service, config, utils
 
 router = APIRouter(
     prefix='/targets',
     tags=['Targets']
 )
+
+
+@router.post('/files')
+async def upload_file(tasks: BackgroundTasks, source_name=File(...), lang=File(...), file: UploadFile = File(...)):
+    path = Path(config.TARGETS_FOLDER, file.filename)
+    async with aiofiles.open(path, 'wb') as f:
+        await f.write(await file.read())
+    tasks.add_task(utils.add_targets_to_db, source_name, lang, path)
+    return True
 
 
 @router.get('')
