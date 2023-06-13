@@ -1,7 +1,6 @@
 import datetime
 
 import pytest
-from sqlalchemy import select, func
 
 from app import service, database, models
 from app.config import logger

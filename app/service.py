@@ -55,6 +55,11 @@ async def delete_api_data(session: AsyncSession):
     await session.commit()
 
 
+async def delete_today_api_data(session: AsyncSession):
+    await session.execute(delete(models.ApiDataRow).where(models.ApiDataRow.date == func.current_date()))
+    await session.commit()
+
+
 async def get_one_not_spammed_target_with_update(session: AsyncSession, source: models.Source, limit: int = 1):
     statement = select(models.TargetEmail) \
         .where(models.TargetEmail.source_id == source.id) \

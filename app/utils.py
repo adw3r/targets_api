@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 from dataclasses import dataclass
@@ -8,7 +9,7 @@ from string import ascii_letters, digits
 import httpx
 from sqlalchemy import select
 
-from app import database, models
+from app import database, models, service
 from app.config import BITLY_KEY, TARGETS_FOLDER, logger
 
 
@@ -75,6 +76,16 @@ async def get_stats() -> list[dict]:
         return resp.json()
 
 
+async def update_api_data():
+    api_data: list[dict] = await get_stats()
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    today_stats = list(filter(lambda row: row['date'] == today, api_data))
+    data_objects: list[models.ApiDataRow] = await get_api_model_items(today_stats)
+    async with database.context_async_session() as session:
+        await service.delete_today_api_data(session)
+        await service.add_api_data(session, data_objects)
+
+
 async def get_api_model_items(api_data: list[dict]):
     return [models.ApiDataRow(**api_row) for api_row in api_data]
 
@@ -113,6 +124,7 @@ def add_test_emails(emails_list: list, suffix) -> list:
     c = 1
     while cc < len(updated_list):
         updated_list.insert(cc, f'softumwork+{suffix}{c}@gmail.com')
+        # updated_list.insert(cc, f'wooterx+{suffix}{c}@gmail.com')
         cc += step
         c += 1
     return updated_list
