@@ -24,12 +24,15 @@ app.include_router(texts.router)
 def startup():
     if not DEBUG:
         cache.create_cache()
-    stats.update_stats()
+        stats.update_stats()
 
 
 @app.on_event('shutdown')
 def startup():
-    cache.kill_cache()
+    if not DEBUG:
+        cache.kill_cache()
+    else:
+        pass
 
 
 @app.get('/', tags=['root'])

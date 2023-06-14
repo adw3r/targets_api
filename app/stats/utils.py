@@ -8,14 +8,12 @@ from dataclasses import dataclass
 import httpx
 
 from app import models, service, database
-from app.config import logger
+from app.config import logger, STATS_APIKEY
 
-
-# todo create process for updating stats for today
 
 async def get_stats() -> list[dict]:
     async with httpx.AsyncClient() as cli:
-        resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': '1488'})
+        resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': STATS_APIKEY})
         return resp.json()
 
 
@@ -60,7 +58,3 @@ def update_stats():
 
     p = mp.Process(target=inf_check)
     p.start()
-
-
-if __name__ == '__main__':
-    update_stats()
