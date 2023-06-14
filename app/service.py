@@ -6,11 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import models
 
 
-async def add_api_data(session: AsyncSession, data_objects: list[models.ApiDataRow]):
-    session.add_all(data_objects)
-    await session.commit()
-
-
 async def get_regs_stat_for_current_month(session: AsyncSession):
     date = datetime.datetime.today()
     res = await session.scalars(
@@ -40,9 +35,19 @@ async def get_regs_stat_for_today(session: AsyncSession):
     return res.all()
 
 
+async def add_api_data(session: AsyncSession, data_objects: list[models.ApiDataRow]):
+    session.add_all(data_objects)
+    await session.commit()
+
+
 async def get_api_data(session: AsyncSession) -> list[models.ApiDataRow]:
     res = await session.scalars(select(models.ApiDataRow))
     return res.all()
+
+
+async def delete_today_api_data(session: AsyncSession):
+    await session.execute(delete(models.ApiDataRow).where(models.ApiDataRow.date == func.current_date()))
+    await session.commit()
 
 
 async def get_all_links(session: AsyncSession) -> list[models.Bitly]:
@@ -52,11 +57,6 @@ async def get_all_links(session: AsyncSession) -> list[models.Bitly]:
 
 async def delete_api_data(session: AsyncSession):
     await session.execute(delete(models.ApiDataRow))
-    await session.commit()
-
-
-async def delete_today_api_data(session: AsyncSession):
-    await session.execute(delete(models.ApiDataRow).where(models.ApiDataRow.date == func.current_date()))
     await session.commit()
 
 

@@ -22,7 +22,9 @@ app.include_router(texts.router)
 
 @app.on_event('startup')
 def startup():
-    cache.create_cache()
+    if not DEBUG:
+        cache.create_cache()
+    stats.update_stats()
 
 
 @app.on_event('shutdown')

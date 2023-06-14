@@ -9,6 +9,8 @@ services:
       - "8181"
     networks:
       - mynetwork
+    environment:
+      - DEBUG=false
     env_file:
        - ".env"
     volumes:

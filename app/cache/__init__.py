@@ -61,7 +61,7 @@ def check_that_cache_is_not_empty():
             current_cache_amount = redis_cli.llen(source.source_name)
             logger.info(f'{current_cache_amount, source}')
             if current_cache_amount < CACHE_AMOUNT and source.source_name not in [t.name for t in active_threads]:
-                thread = Thread(target=get_targets_list_from_source_to_cache, args=(source, CACHE_AMOUNT),
+                thread = Thread(target=get_targets_list_from_source_to_cache, args=(source, CACHE_AMOUNT / 2),
                                 name=source.source_name)
                 thread.start()
                 active_threads.append(thread)
