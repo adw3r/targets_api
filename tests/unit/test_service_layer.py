@@ -32,7 +32,7 @@ async def test_get_source(db_session):
 async def test_get_target(db_session):
     db_session = await anext(db_session)
     source: models.Source = await service.get_source_by_name(db_session, 'ukgoo')
-    targets = await service.get_one_not_spammed_target_with_update(db_session, source, limit=10_000)
+    targets = await service.get_targets_with_update_sent_counter(db_session, source, limit=10_000)
     print(targets)
     for t in targets:
         assert type(t) == models.TargetEmail

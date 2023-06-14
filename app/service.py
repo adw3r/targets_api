@@ -60,7 +60,7 @@ async def delete_today_api_data(session: AsyncSession):
     await session.commit()
 
 
-async def get_one_not_spammed_target_with_update(session: AsyncSession, source: models.Source, limit: int = 1):
+async def get_targets_with_update_sent_counter(session: AsyncSession, source: models.Source, limit: int = 1):
     statement = select(models.TargetEmail) \
         .where(models.TargetEmail.source_id == source.id) \
         .order_by(models.TargetEmail.sent_counter).limit(limit).with_for_update()
