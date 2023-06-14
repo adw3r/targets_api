@@ -5,7 +5,8 @@ from fastapi import APIRouter, Depends, Response, HTTPException, File, UploadFil
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app import models, database, cache, service, config, utils
+from app import models, database, cache, service, config
+from . import utils
 
 router = APIRouter(
     prefix='/targets',

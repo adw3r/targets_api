@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app import models, database, service, utils
+from app import models, database, service, links
 from app.config import logger
 
 router = APIRouter(
@@ -22,7 +22,7 @@ async def get_shortened_link_v2(
     referral: models.Referral = await service.get_referral_with_name(db_session, project_name)
     if not referral:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Referral {project_name} is not found')
-    result = await utils.get_link_from_bitly(utm_source=targets_base, utm_campaign=referral.name, utm_term=donor,
+    result = await links.get_link_from_bitly(utm_source=targets_base, utm_campaign=referral.name, utm_term=donor,
                                              utm_link=referral.link)
     result_json = result.json()
     db_session.add(
@@ -37,7 +37,7 @@ async def get_shortened_link_v2(
 
 @router.post('/link')
 async def create_link_straight(link, db_session: AsyncSession = Depends(database.create_async_session)):
-    result = await utils.create_link(link)
+    result = await links.create_link(link)
     result_json = result.json()
     if 'errors' in result_json.keys():
         logger.info(result_json)
@@ -53,7 +53,7 @@ async def create_link_straight(link, db_session: AsyncSession = Depends(database
 
 @router.get('/link/summary')
 async def get_link_summary(link_id, db_session: AsyncSession = Depends(database.create_async_session)):
-    result_json: dict = await utils.get_link_summary(link_id)
+    result_json: dict = await links.get_link_summary(link_id)
     bitly_instance = await db_session.scalar(select(models.Bitly).where(models.Bitly.link_id == link_id))
     result_json.update(bitly_instance.to_dict())
     return result_json
