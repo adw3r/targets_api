@@ -17,12 +17,12 @@ if not TARGETS_FOLDER.exists():
     os.mkdir(TARGETS_FOLDER)
 
 
-DEBUG = config['general'].getboolean('DEBUG', True)
+DEBUG = environ.getboolean('DEBUG', True)
 if not DEBUG:
     HOST = environ.get('HOST', '0.0.0.0')
-    PORT = config['general'].get('PORT', '8181')
+    PORT = environ.get('PORT', '8181')
 else:
-    HOST = config['general'].getint('TEST_HOST', 'localhost')
+    HOST = environ.get('TEST_HOST', 'localhost')
     PORT = environ.getint('TEST_PORT', '8281')
 
 POSTGRES_DB = environ['POSTGRES_DB']

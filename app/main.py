@@ -28,11 +28,9 @@ def startup():
 
 
 @app.on_event('shutdown')
-def startup():
+def shutdown():
     if not DEBUG:
         cache.kill_cache()
-    else:
-        pass
 
 
 @app.get('/', tags=['root'])
