@@ -15,6 +15,9 @@ services:
        - ".env"
     volumes:
       - ./targets:/targets
+    depends_on:
+      - db
+      - redis
   db:
     image: postgres:latest
     networks:

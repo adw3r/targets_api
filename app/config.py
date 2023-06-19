@@ -20,7 +20,7 @@ if not TARGETS_FOLDER.exists():
 DEBUG = environ.getboolean('DEBUG', True)
 if not DEBUG:
     HOST = environ.get('HOST', '0.0.0.0')
-    PORT = environ.get('PORT', '8181')
+    PORT = environ.getint('PORT', '8181')
 else:
     HOST = environ.get('TEST_HOST', 'localhost')
     PORT = environ.getint('TEST_PORT', '8281')
@@ -29,13 +29,13 @@ POSTGRES_DB = environ['POSTGRES_DB']
 POSTGRES_PASSWORD = environ['POSTGRES_PASSWORD']
 POSTGRES_USER = environ['POSTGRES_USER']
 POSTGRES_HOST = environ['POSTGRES_HOST']
-POSTGRES_PORT = environ['POSTGRES_PORT']
+POSTGRES_PORT = environ.getint('POSTGRES_PORT')
 ASYNC_DB_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 SYNC_DB_URL = f"postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
 REDIS_PASSWORD = environ['REDIS_PASSWORD']
 REDIS_HOST = environ['REDIS_HOST']
-REDIS_PORT = environ['REDIS_PORT']
+REDIS_PORT = environ.getint('REDIS_PORT')
 
 BITLY_KEY = environ['BITLY_KEY']
 STATS_APIKEY = environ['STATS_APIKEY']
