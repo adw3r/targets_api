@@ -14,7 +14,7 @@ class TargetEmail(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String, nullable=False)
-    sent_counter: Mapped[int] = mapped_column(SMALLINT, nullable=True, default=0)
+    sent_counter: Mapped[int] = mapped_column(SMALLINT, server_default='default 0', nullable=False)
 
     source_id: Mapped[int] = mapped_column(SMALLINT, ForeignKey('sources.id'))
     source: Mapped["Source"] = relationship("Source", back_populates='targets', cascade='all')
