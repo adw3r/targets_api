@@ -28,13 +28,13 @@ async def get_regs_stat(time_format: str = 'all', db_session: AsyncSession = Dep
         case r'\d{4}-\d{2}-\d{2}':
             results = await service.get_regs_stat_for_specific_date(db_session, time_format)
             return results
-        case r'today':
+        case 'today':
             res = await service.get_regs_stat_for_today(db_session)
             return res
-        case r'month':
+        case 'month':
             results = await service.get_regs_stat_for_current_month(db_session)
             return results
         case 'all':
-            res = await service.get_api_data(db_session)
+            res: list[service.RegApiData] = await service.get_api_data(db_session)
             logger.debug(f'{len(res)}')
             return res

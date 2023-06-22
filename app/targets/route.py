@@ -1,12 +1,16 @@
 from pathlib import Path
 
 import aiofiles
+import redis.asyncio
 from fastapi import APIRouter, Depends, Response, HTTPException, File, UploadFile, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app import models, database, cache, service, config
+from app import models, database, service, config
+from app.config import REDIS_PASSWORD, REDIS_PORT, REDIS_HOST
 from . import utils
+
+redis_cli = redis.asyncio.Redis(password=REDIS_PASSWORD, port=REDIS_PORT, host=REDIS_HOST)
 
 router = APIRouter(
     prefix='/targets',
@@ -41,7 +45,7 @@ async def get_factory_pool(pool: str, method: str = 'info',
         case 'info':
             return source
         case 'pop':
-            target = cache.redis_cli.lpop(pool)
+            target = await redis_cli.lpop(pool)
             if not target:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
             return Response(content=target)

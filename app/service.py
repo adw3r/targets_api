@@ -1,3 +1,4 @@
+import dataclasses
 import datetime
 
 from sqlalchemy import select, text, delete, func
@@ -40,9 +41,18 @@ async def add_api_data(session: AsyncSession, data_objects: list[models.ApiDataR
     await session.commit()
 
 
-async def get_api_data(session: AsyncSession) -> list[models.ApiDataRow]:
-    res = await session.scalars(select(models.ApiDataRow))
-    return res.all()
+@dataclasses.dataclass(frozen=True, slots=True)
+class RegApiData:
+    regs: int
+    data: datetime.datetime
+
+
+async def get_api_data(session: AsyncSession) -> list[RegApiData]:
+    stmt = '''
+        select sum(registration) as reg, date from api_stats group by date order by date desc
+    '''
+    res = await session.execute(text(stmt))
+    return [RegApiData(*i) for i in res.all()]
 
 
 async def delete_today_api_data(session: AsyncSession):
