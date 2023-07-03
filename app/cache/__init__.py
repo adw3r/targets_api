@@ -19,8 +19,6 @@ def kill_cache():
 
 
 def create_cache():
-    logger.info('creating cache...')
-    logger.info(f'Redis status {redis_cli.ping()}')
     cache_process = multiprocessing.Process(target=check_that_cache_is_not_empty)
     cache_process.start()
     caching_processes.append(cache_process)
@@ -47,6 +45,8 @@ def get_all_sources():
 
 
 def check_that_cache_is_not_empty():
+    logger.info('creating cache...')
+    logger.info(f'Redis status {redis_cli.ping()}')
     active_threads = []
     while True:
         if not any([thread.is_alive() for thread in active_threads]):
@@ -66,7 +66,3 @@ def check_that_cache_is_not_empty():
                 thread.start()
                 active_threads.append(thread)
         time.sleep(2)
-
-
-if __name__ == '__main__':
-    check_that_cache_is_not_empty()

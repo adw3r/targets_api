@@ -1,23 +1,6 @@
 version: "3.8"
 
 services:
-  targets-api:
-    image: alexeynaidiuk/targets-api:latest
-    build: .
-    restart: always
-    ports:
-      - "8181"
-    networks:
-      - mynetwork
-    environment:
-      - DEBUG=false
-    env_file:
-       - ".env"
-    volumes:
-      - ./targets:/targets
-    depends_on:
-      - db
-      - redis
   db:
     image: postgres:latest
     networks:
@@ -39,6 +22,36 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes:
       - ./redis:/data
+  cache:
+    image: alexeynaidiuk/targets-api-cache:latest
+    build: .
+    restart: always
+    env_file:
+      - ".env"
+    environment:
+      - DEBUG=false
+    networks:
+      - mynetwork
+    depends_on:
+      - db
+      - redis
+    command: "python3 -m app.cache"
+  targets-api:
+    image: alexeynaidiuk/target-api:latest
+    build: .
+    restart: always
+    env_file:
+       - ".env"
+    environment:
+      - DEBUG=false
+    networks:
+      - mynetwork
+    depends_on:
+      - cache
+    ports:
+      - "8181"
+    volumes:
+      - ./targets:/targets
   nginx:
     image: nginx:latest
     restart: always

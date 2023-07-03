@@ -44,17 +44,21 @@ def inf_update_stats():
     asyncio.run(update_api_data())
 
 
+def inf_check():
+    while True:
+        now = datetime.datetime.now()
+        if now.second == 58:
+            process = mp.Process(target=inf_update_stats)
+            process.start()
+            process.join()
+        time.sleep(.5)
+
+
 def update_stats():
     logger.info(f'creating stats update process...')
-
-    def inf_check():
-        while True:
-            now = datetime.datetime.now()
-            if now.second == 58:
-                process = mp.Process(target=inf_update_stats)
-                process.start()
-                process.join()
-            time.sleep(.5)
-
     p = mp.Process(target=inf_check)
     p.start()
+
+
+if __name__ == '__main__':
+    inf_check()
