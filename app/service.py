@@ -55,6 +55,12 @@ async def get_api_data(session: AsyncSession) -> list[RegApiData]:
     return [RegApiData(*i) for i in res.all()]
 
 
+async def hit_stats(session: AsyncSession):
+    statement = text('select sum(hits) as hits, utm_term from api_stats group by utm_term order by hits desc')
+    res = await session.execute(statement)
+    return [{'utm_term': i[1], 'hits': i[0]} for i in res.fetchall()]
+
+
 async def delete_today_api_data(session: AsyncSession):
     await session.execute(delete(models.ApiDataRow).where(models.ApiDataRow.date == func.current_date()))
     await session.commit()

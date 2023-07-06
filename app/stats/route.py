@@ -1,6 +1,7 @@
 import asyncio
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models, database, service, links
@@ -19,6 +20,12 @@ async def get_stats(time_unit: str = 'month', db_session: AsyncSession = Depends
     results = await asyncio.gather(
         *[asyncio.create_task(links.get_link_summary(bitly.link_id, time_unit)) for bitly in links_list]
     )
+    return results
+
+
+@router.get('/hits')
+async def get_hits(db_session: AsyncSession = Depends(database.create_async_session)):
+    results: dict = await service.hit_stats(db_session)
     return results
 
 
