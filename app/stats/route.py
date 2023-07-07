@@ -24,12 +24,14 @@ async def donors_stats(db_session: AsyncSession = Depends(database.create_async_
 
 
 @router.get('/clicks')
-async def get_stats(time_unit: str = 'month', db_session: AsyncSession = Depends(database.create_async_session)):
-    links_list: list[models.Bitly] = await service.get_all_links(db_session)
-    results = await asyncio.gather(
-        *[asyncio.create_task(links.get_link_summary(bitly.link_id, time_unit)) for bitly in links_list]
-    )
-    return results
+async def get_stats(time_unit: str = 'month', db_session: AsyncSession = Depends(database.create_async_session)):  # todo
+    statement = text('''
+        select donor_name, prom_link from spam_donors
+    ''')
+    results = await db_session.execute(statement)
+    # results = [{'donor_name': row[0], 'clicks': None} for row in results.fetchall()]
+    # results = await asyncio.wait([asyncio.create_task(links.get_link_summary(bitly.link_id, time_unit)) for bitly in links_list])
+    return 'not implemented!'
 
 
 @router.get('/hits')
