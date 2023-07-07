@@ -1,3 +1,6 @@
+import logging
+
+import loguru
 from fastapi import APIRouter, Depends, Response, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,7 +17,7 @@ router = APIRouter(
 @router.post('')
 async def create_project(donor_scheme: schemas.SpamDonorPostSchema,
                          db_session: AsyncSession = Depends(database.create_async_session)):
-    donor_instance = await db_session.scalar(
+    donor_instance: models.SpamDonor = await db_session.scalar(
         select(models.SpamDonor).where(models.SpamDonor.donor_name == donor_scheme.donor_name))
     if donor_instance:
         donor_instance.update(**donor_scheme.dict())
@@ -23,8 +26,11 @@ async def create_project(donor_scheme: schemas.SpamDonorPostSchema,
         return donor_instance
     else:
         donor_instance = models.SpamDonor(**donor_scheme.dict())
-        db_session.add(donor_instance)
-        await db_session.commit()
+        try:
+            db_session.add(donor_instance)
+            await db_session.commit()
+        except Exception as error:
+            logging.exception(error)
         return donor_instance
 
 
@@ -33,7 +39,7 @@ async def get_project_status(donor_name: str, db_session: AsyncSession = Depends
     res = await db_session.scalar(select(models.SpamDonor).where(models.SpamDonor.donor_name == donor_name))
     if not res:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail='Donor with name {} not found'.format(project_name))
+                            detail='Donor with name {} not found'.format(donor_name))
     return res
 
 
