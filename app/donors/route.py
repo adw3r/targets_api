@@ -6,7 +6,7 @@ from starlette import status
 from app import models, database, schemas
 
 router = APIRouter(
-    prefix='/projects',
+    prefix='/donors',
     tags=['Donors']
 )
 
@@ -28,22 +28,22 @@ async def create_project(donor_scheme: schemas.SpamDonorPostSchema,
         return donor_instance
 
 
-@router.get('/{project_name}')
-async def get_project_status(project_name: str, db_session: AsyncSession = Depends(database.create_async_session)):
-    res = await db_session.scalar(select(models.SpamDonor).where(models.SpamDonor.donor_name == project_name))
+@router.get('/{donor_name}')
+async def get_project_status(donor_name: str, db_session: AsyncSession = Depends(database.create_async_session)):
+    res = await db_session.scalar(select(models.SpamDonor).where(models.SpamDonor.donor_name == donor_name))
     if not res:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail='Donor with name {} not found'.format(project_name))
     return res
 
 
-@router.put('/{project_name}')
-async def send_count(project_name: str, json_form: schemas.SpamDonorCount,
+@router.put('/{donor_name}')
+async def send_count(donor_name: str, json_form: schemas.SpamDonorCount,
                      db_session: AsyncSession = Depends(database.create_async_session)):
     donor_instance = await db_session.scalar(
-        select(models.SpamDonor).where(models.SpamDonor.donor_name == project_name))
+        select(models.SpamDonor).where(models.SpamDonor.donor_name == donor_name))
     if not donor_instance:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'donor {project_name} was not found!')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'donor {donor_name} was not found!')
     if json_form.success_count >= 0:
         donor_instance.success_count += json_form.success_count
     else:
