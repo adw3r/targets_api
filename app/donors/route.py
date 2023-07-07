@@ -3,6 +3,7 @@ import logging
 import loguru
 from fastapi import APIRouter, Depends, Response, HTTPException
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -29,8 +30,10 @@ async def create_project(donor_scheme: schemas.SpamDonorPostSchema,
         try:
             db_session.add(donor_instance)
             await db_session.commit()
-        except Exception as error:
-            logging.exception(error)
+        except IntegrityError as error:
+            await db_session.rollback()
+            donor_instance: models.SpamDonor = await db_session.scalar(
+                select(models.SpamDonor).where(models.SpamDonor.donor_name == donor_scheme.donor_name))
         return donor_instance
 
 
