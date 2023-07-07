@@ -14,6 +14,15 @@ router = APIRouter(
 )
 
 
+@router.get('/donors')
+async def donors_stats(db_session: AsyncSession = Depends(database.create_async_session)):
+    statement = text('''
+        select donor_name, success_count, fail_count from spam_donors
+    ''')
+    res = await db_session.execute(statement)
+    return [{'donor_name': row[0], 'success_count': row[1], 'fail_count': row[2]} for row in res.fetchall()]
+
+
 @router.get('/clicks')
 async def get_stats(time_unit: str = 'month', db_session: AsyncSession = Depends(database.create_async_session)):
     links_list: list[models.Bitly] = await service.get_all_links(db_session)
