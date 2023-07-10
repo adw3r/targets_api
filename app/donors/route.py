@@ -46,7 +46,7 @@ async def get_project_status(donor_name: str, db_session: AsyncSession = Depends
     return res
 
 
-@router.put('/{donor_name}')
+@router.put('/{donor_name}/counters')
 async def send_count(donor_name: str, json_form: schemas.SpamDonorCount,
                      db_session: AsyncSession = Depends(database.create_async_session)):
     donor_instance = await db_session.scalar(
