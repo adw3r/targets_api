@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.responses import RedirectResponse
 
-from app import cache, donors, links, referrals, stats, targets, texts
+from app import donors, links, referrals, stats, targets, texts
 from app.config import HOST, PORT, DEBUG
 
 if DEBUG:
@@ -18,12 +18,6 @@ app.include_router(referrals.router)
 app.include_router(stats.router)
 app.include_router(targets.router)
 app.include_router(texts.router)
-
-
-@app.on_event('startup')
-def startup():
-    if not DEBUG:
-        stats.update_stats()
 
 
 @app.get('/', tags=['root'])

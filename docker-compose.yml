@@ -24,8 +24,21 @@ services:
       - ./redis:/data
     depends_on:
       - db
+  stats:
+    image: alexeynaidiuk/targets-api:latest
+    build: .
+    restart: always
+    env_file:
+      - ".env"
+    environment:
+      - DEBUG=false
+    networks:
+      - mynetwork
+    depends_on:
+      - db
+    command: "python3 -m app.stats"
   cache:
-    image: alexeynaidiuk/targets-api-cache:latest
+    image: alexeynaidiuk/targets-api:latest
     build: .
     restart: always
     env_file:
@@ -38,7 +51,7 @@ services:
       - redis
     command: "python3 -m app.cache"
   targets-api:
-    image: alexeynaidiuk/target-api:latest
+    image: alexeynaidiuk/targets-api:latest
     build: .
     restart: always
     env_file:

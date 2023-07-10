@@ -1,6 +1,3 @@
-import logging
-
-import loguru
 from fastapi import APIRouter, Depends, Response, HTTPException
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError

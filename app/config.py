@@ -16,7 +16,6 @@ TARGETS_FOLDER = pathlib.Path(PACKAGE_FOLDER, 'targets')
 if not TARGETS_FOLDER.exists():
     os.mkdir(TARGETS_FOLDER)
 
-
 DEBUG = environ.getboolean('DEBUG', True)
 if not DEBUG:
     HOST = environ.get('HOST', '0.0.0.0')

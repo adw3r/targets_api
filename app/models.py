@@ -38,7 +38,7 @@ class Source(Base):
     source_name: Mapped[str] = mapped_column(VARCHAR(10), nullable=False, index=True)
     text_id: Mapped[int] = mapped_column(SMALLINT, ForeignKey('texts.id'), index=True)
 
-    is_available: Mapped[bool] = mapped_column(BOOLEAN, nullable=False, default=True)
+    is_available: Mapped[bool] = mapped_column(BOOLEAN, nullable=False, server_default='true')
 
     text: Mapped["Text"] = relationship("Text", back_populates='source')
     targets: Mapped[list["TargetEmail"]] = relationship(
@@ -81,7 +81,7 @@ class Referral(Base):
     name: Mapped[str] = mapped_column(VARCHAR(20), nullable=False)
     spins: Mapped[int] = mapped_column(SMALLINT, nullable=True)
     link: Mapped[str] = mapped_column(String, nullable=False)
-    available: Mapped[bool] = mapped_column(BOOLEAN, default=False)
+    available: Mapped[bool] = mapped_column(BOOLEAN, server_default='false')
 
     def __repr__(self):
         return f'Referral({self.name!r}, {self.spins!r}, {self.link!r}, {self.available!r})'
@@ -117,9 +117,9 @@ class Bitly(Base):
 class SpamDonor(Base):
     __tablename__ = 'spam_donors'
     id: Mapped[int] = mapped_column(INTEGER, primary_key=True)
-    success_count: Mapped[int] = mapped_column(SMALLINT, default=1)
-    fail_count: Mapped[int] = mapped_column(SMALLINT, default=0)
-    status: Mapped[bool] = mapped_column(BOOLEAN, default=True)
+    success_count: Mapped[int] = mapped_column(INTEGER, server_default='0')
+    fail_count: Mapped[int] = mapped_column(SMALLINT, server_default='0')
+    status: Mapped[bool] = mapped_column(BOOLEAN, server_default='true')
 
     donor_name: Mapped[str] = mapped_column(VARCHAR(20), nullable=False, unique=True)
     prom_link: Mapped[str] = mapped_column(VARCHAR(22), nullable=False)

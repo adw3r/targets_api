@@ -1,12 +1,10 @@
-import asyncio
-
 from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import models, database, service, links
-from . import utils
+from app import database, service
 from app.config import logger
+from . import utils
 
 router = APIRouter(
     prefix='/stats',
@@ -24,7 +22,8 @@ async def donors_stats(db_session: AsyncSession = Depends(database.create_async_
 
 
 @router.get('/clicks')
-async def get_stats(time_unit: str = 'month', db_session: AsyncSession = Depends(database.create_async_session)):  # todo
+async def get_stats(time_unit: str = 'month',
+                    db_session: AsyncSession = Depends(database.create_async_session)):  # todo
     statement = text('''
         select donor_name, prom_link from spam_donors
     ''')

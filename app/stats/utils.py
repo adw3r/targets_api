@@ -45,6 +45,8 @@ def inf_update_stats():
 
 
 def inf_check():
+    logger.info(f'creating stats update process...')
+
     while True:
         now = datetime.datetime.now()
         if now.second == 58:
@@ -52,13 +54,3 @@ def inf_check():
             process.start()
             process.join()
         time.sleep(.5)
-
-
-def update_stats():
-    logger.info(f'creating stats update process...')
-    p = mp.Process(target=inf_check)
-    p.start()
-
-
-if __name__ == '__main__':
-    inf_check()
