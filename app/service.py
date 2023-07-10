@@ -61,6 +61,11 @@ async def hit_stats(session: AsyncSession):
     return [{'utm_term': i[1], 'hits': i[0]} for i in res.fetchall()]
 
 
+async def get_donor(session: AsyncSession, donor_name: str):
+    return await session.scalar(
+        select(models.SpamDonor).where(models.SpamDonor.donor_name == donor_name))
+
+
 async def delete_today_api_data(session: AsyncSession):
     await session.execute(delete(models.ApiDataRow).where(models.ApiDataRow.date == func.current_date()))
     await session.commit()
