@@ -21,7 +21,7 @@ async def donors_stats(db_session: AsyncSession = Depends(database.create_async_
     return [{'donor_name': row[0], 'success_count': row[1], 'fail_count': row[2]} for row in res.fetchall()]
 
 
-@router.get('/clicks')
+@router.get('/clicks', deprecated=True)
 async def get_stats(time_unit: str = 'month',
                     db_session: AsyncSession = Depends(database.create_async_session)):  # todo
     statement = text('''
