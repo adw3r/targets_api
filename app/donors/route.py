@@ -15,12 +15,13 @@ router = APIRouter(
 @router.post('')
 async def create_project(donor_scheme: schemas.SpamDonorPostSchema,
                          db_session: AsyncSession = Depends(database.create_async_session)):
-    donor_instance = await service.get_donor(db_session, donor_scheme.donor_name)
+    donor_instance: models.SpamDonor = await service.get_donor(db_session, donor_scheme.donor_name)
     if donor_instance:
         donor_instance.update(**donor_scheme.dict())
+        if donor_instance.fail_count <= -200 and donor_instance.status is True:
+            donor_instance.status = False
         db_session.add(donor_instance)
         await db_session.commit()
-        return donor_instance
     else:
         donor_instance = models.SpamDonor(**donor_scheme.dict())
         try:
@@ -29,7 +30,7 @@ async def create_project(donor_scheme: schemas.SpamDonorPostSchema,
         except IntegrityError as error:
             await db_session.rollback()
             donor_instance = await service.get_donor(db_session, donor_scheme.donor_name)
-        return donor_instance
+    return donor_instance
 
 
 @router.get('/{donor_name}')
@@ -62,8 +63,6 @@ async def send_count(donor_name: str, json_form: schemas.SpamDonorCount,
         donor_instance.success_count += json_form.success_count
     else:
         donor_instance.fail_count += json_form.success_count
-    if donor_instance.fail_count <= -200:
-        donor_instance.status = False
     db_session.add(donor_instance)
     await db_session.commit()
     return Response(content='success')

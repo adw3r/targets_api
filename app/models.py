@@ -118,7 +118,7 @@ class SpamDonor(Base):
     __tablename__ = 'spam_donors'
     id: Mapped[int] = mapped_column(INTEGER, primary_key=True)
     success_count: Mapped[int] = mapped_column(INTEGER, server_default='0')
-    fail_count: Mapped[int] = mapped_column(SMALLINT, server_default='0')
+    fail_count: Mapped[int] = mapped_column(INTEGER, server_default='0')
     status: Mapped[bool] = mapped_column(BOOLEAN, server_default='true')
 
     donor_name: Mapped[str] = mapped_column(VARCHAR(20), nullable=False, unique=True)
