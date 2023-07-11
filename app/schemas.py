@@ -14,8 +14,9 @@ class TextSchema(BaseModel):
 
 
 class SpamDonorPostSchema(BaseModel):
-    # status: bool = True
-    # fails_count: int = 0
+    status: bool = True
+    fail_count: int = 0
+    success_count: int = 0
     donor_name: str
     prom_link: str
     referral_name: str
