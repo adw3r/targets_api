@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.responses import RedirectResponse
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +11,11 @@ router = APIRouter(
     prefix='/stats',
     tags=['Stats']
 )
+
+
+@router.get('')
+async def root_stats():
+    return RedirectResponse('/stats/regs')
 
 
 @router.get('/donors')
