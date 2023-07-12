@@ -1,6 +1,4 @@
 from fastapi import APIRouter, Depends, Response, HTTPException
-from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -12,38 +10,39 @@ router = APIRouter(
 )
 
 
+@router.get('/{donor_name}')
+async def get_project_info(donor_name: str, db_session: AsyncSession = Depends(database.create_async_session)):
+    donor: models.SpamDonor = await service.get_donor(db_session, donor_name)
+    if not donor:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='Donor with name {} not found'.format(donor_name))
+    if donor.fail_count <= -200 and donor.status is True:
+        donor.status = False
+        db_session.add(donor)
+        await db_session.commit()
+        await db_session.refresh(donor)
+    return donor
+
+
 @router.post('')
 async def create_project(donor_scheme: schemas.SpamDonorPostSchema,
                          db_session: AsyncSession = Depends(database.create_async_session)):
     donor_instance: models.SpamDonor = await service.get_donor(db_session, donor_scheme.donor_name)
     if donor_instance:
         donor_instance.update(**donor_scheme.dict())
-        if donor_instance.fail_count <= -200 and donor_instance.status is True:
-            donor_instance.status = False
         db_session.add(donor_instance)
         await db_session.commit()
     else:
         donor_instance = models.SpamDonor(**donor_scheme.dict())
-        try:
-            db_session.add(donor_instance)
-            await db_session.commit()
-        except IntegrityError as error:
-            await db_session.rollback()
-            donor_instance = await service.get_donor(db_session, donor_scheme.donor_name)
+        db_session.add(donor_instance)
+        await db_session.commit()
+    await db_session.refresh(donor_instance)
     return donor_instance
 
 
-@router.get('/{donor_name}')
-async def get_project_status(donor_name: str, db_session: AsyncSession = Depends(database.create_async_session)):
-    res = await db_session.scalar(select(models.SpamDonor).where(models.SpamDonor.donor_name == donor_name))
-    if not res:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail='Donor with name {} not found'.format(donor_name))
-    return res
-
-
-@router.put('/{donor_name}/status')
-async def update_status(donor_name: str, status: bool, db_session: AsyncSession = Depends(database.create_async_session)):
+@router.patch('/{donor_name}/status')
+async def update_status(donor_name: str, status: bool,
+                        db_session: AsyncSession = Depends(database.create_async_session)):
     donor_instance: models.SpamDonor = await service.get_donor(db_session, donor_name)
     donor_instance.status = status
     donor_instance.fail_count = 0
@@ -53,7 +52,7 @@ async def update_status(donor_name: str, status: bool, db_session: AsyncSession 
     return donor_instance
 
 
-@router.put('/{donor_name}/counters')
+@router.patch('/{donor_name}/counters')
 async def send_count(donor_name: str, json_form: schemas.SpamDonorCount,
                      db_session: AsyncSession = Depends(database.create_async_session)):
     donor_instance = await service.get_donor(db_session, donor_name)
