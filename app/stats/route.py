@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import database, service
+from app import database
 from app.config import logger
-from . import utils
+from app.stats import service
 
 router = APIRouter(
     prefix='/stats',
@@ -41,7 +41,7 @@ async def get_hits(db_session: AsyncSession = Depends(database.create_async_sess
 
 @router.get('/regs')
 async def get_regs_stat(time_format: str = 'all', db_session: AsyncSession = Depends(database.create_async_session)):
-    match utils.RegexIn(time_format):
+    match service.RegexIn(time_format):
         case r'\d{4}-\d{2}-\d{2}':
             results = await service.get_regs_stat_for_specific_date(db_session, time_format)
             return results
