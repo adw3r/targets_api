@@ -25,7 +25,7 @@ services:
     depends_on:
       - db
   stats:
-    image: alexeynaidiuk/targets-api:latest
+    image: alexeynaidiuk/targets-api:dev
     build: .
     restart: always
     env_file:
@@ -38,7 +38,7 @@ services:
       - db
     command: "python3 -m app.stats"
   cache:
-    image: alexeynaidiuk/targets-api:latest
+    image: alexeynaidiuk/targets-api:dev
     build: .
     restart: always
     env_file:
@@ -51,7 +51,7 @@ services:
       - redis
     command: "python3 -m app.cache"
   targets-api:
-    image: alexeynaidiuk/targets-api:latest
+    image: alexeynaidiuk/targets-api:dev
     build: .
     restart: always
     env_file:
