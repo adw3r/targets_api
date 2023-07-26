@@ -58,7 +58,7 @@ def __get_or_create_source(db_session: Session, lang: str, source_name: str) -> 
     return source
 
 
-def __add_test_emails(emails_list: list, suffix: str) -> list:  # refactor
+def __add_test_emails(emails_list: list, suffix: str) -> list:
     step = 500
 
     c = step

@@ -1,9 +1,12 @@
+import asyncio
+
 from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
-from sqlalchemy import text, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import database, models
+from app import links
 from app.config import logger
 from app.stats import service
 
@@ -20,34 +23,30 @@ async def root_stats():
 
 @router.get('/donors')
 async def donors_stats(db_session: AsyncSession = Depends(database.create_async_session)):
-    statement = text('''
-        select donor_name, success_count, fail_count from spam_donors
-    ''')
-    res = await db_session.execute(statement)
-    return [{'donor_name': row[0], 'success_count': row[1], 'fail_count': row[2]} for row in res.fetchall()]
+    spam_donors: list[models.SpamDonor] = await service.get_all_donors(db_session)
+    return spam_donors
 
 
 @router.get('/all')
 async def get_all_api_stats(db_session: AsyncSession = Depends(database.create_async_session)):
-    results = [i for i in await db_session.scalars(select(models.ApiDataRow).order_by(models.ApiDataRow.registration.desc()))]
+    results: list[models.ApiDataRow] = [
+        i for i in
+        await db_session.scalars(select(models.ApiDataRow).order_by(models.ApiDataRow.registration.desc()))
+    ]
     return results
 
 
-@router.get('/clicks', deprecated=True)
+@router.get('/clicks')
 async def get_stats(time_unit: str = 'month',
                     db_session: AsyncSession = Depends(database.create_async_session)):  # todo
-    statement = text('''
-        select donor_name, prom_link from spam_donors
-    ''')
-    results = await db_session.execute(statement)
-    # results = [{'donor_name': row[0], 'clicks': None} for row in results.fetchall()]
-    # results = await asyncio.wait([asyncio.create_task(links.get_link_summary(bitly.link_id, time_unit)) for bitly in links_list])
-    return 'not implemented!'
+    spam_donors: list[models.SpamDonor] = await service.get_all_donors(db_session)
+    await asyncio.gather(*[links.get_link_summary(donor, time_unit) for donor in spam_donors])
+    return spam_donors
 
 
 @router.get('/hits')
 async def get_hits(db_session: AsyncSession = Depends(database.create_async_session)):
-    results: dict = await service.hit_stats(db_session)
+    results: list[dict] = await service.hit_stats(db_session)
     return results
 
 

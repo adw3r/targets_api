@@ -1,6 +1,6 @@
 import httpx
 
-from app import config, texts
+from app import config, texts, models
 
 
 async def create_link(link_to_short) -> httpx.Response:
@@ -16,13 +16,15 @@ async def create_link(link_to_short) -> httpx.Response:
         return response
 
 
-async def get_link_summary(bitly_link: str, time_unit: str = 'month') -> dict:
+async def get_link_summary(donor: models.SpamDonor, time_unit: str = 'month') -> models.SpamDonor:
     """
 
     :param bitly_link: format of bit.ly/3oB8qmJ
     :param time_unit: 'month' 'day'
     :return:
     """
+
+    bitly_link = donor.prom_link
     headers = {
         'Authorization': f'Bearer {config.BITLY_KEY}',
     }
@@ -30,7 +32,8 @@ async def get_link_summary(bitly_link: str, time_unit: str = 'month') -> dict:
         response = await client.get(
             f'https://api-ssl.bitly.com/v4/bitlinks/{bitly_link}/clicks/summary?unit={time_unit}',
             headers=headers)
-        return response.json()
+    donor.stats = response.json()
+    return donor
 
 
 async def get_link_from_bitly(utm_link: str, utm_source: str, utm_campaign: str, utm_term: str) -> httpx.Response:

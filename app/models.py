@@ -33,6 +33,7 @@ class TargetEmail(Base):
 
 class Source(Base):
     __tablename__ = 'sources'
+    # created at datetime
 
     id: Mapped[int] = mapped_column(SMALLINT, primary_key=True, index=True)
     source_name: Mapped[str] = mapped_column(VARCHAR(10), nullable=False, index=True)
@@ -116,6 +117,9 @@ class Bitly(Base):
 
 class SpamDonor(Base):
     __tablename__ = 'spam_donors'
+    # created_at datetime
+    # modified_at datetime
+
     id: Mapped[int] = mapped_column(INTEGER, primary_key=True)
     success_count: Mapped[int] = mapped_column(INTEGER, server_default='0')
     fail_count: Mapped[int] = mapped_column(INTEGER, server_default='0')
