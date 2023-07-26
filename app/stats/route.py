@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
-from sqlalchemy import text
+from sqlalchemy import text, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import database
+from app import database, models
 from app.config import logger
 from app.stats import service
 
@@ -25,6 +25,12 @@ async def donors_stats(db_session: AsyncSession = Depends(database.create_async_
     ''')
     res = await db_session.execute(statement)
     return [{'donor_name': row[0], 'success_count': row[1], 'fail_count': row[2]} for row in res.fetchall()]
+
+
+@router.get('/all')
+async def get_all_api_stats(db_session: AsyncSession = Depends(database.create_async_session)):
+    results = [i for i in await db_session.scalars(select(models.ApiDataRow).order_by(models.ApiDataRow.registration.desc()))]
+    return results
 
 
 @router.get('/clicks', deprecated=True)
