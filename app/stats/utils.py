@@ -3,9 +3,10 @@ from app.config import logger
 from app.stats import service
 
 
-async def update_api_data():
-    month_stats: list[dict] = await service.get_stats()
-
+async def update_api_data() -> None:
+    month_stats: list[dict] | None = await service.get_stats()
+    if not month_stats:
+        return
     data_objects: list[models.ApiDataRow] = await service.get_api_model_items(month_stats)
     logger.info(f'{data_objects[0]=}')
     async with database.context_async_session() as session:

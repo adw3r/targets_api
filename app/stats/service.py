@@ -7,17 +7,21 @@ from sqlalchemy import select, text, delete, func, extract
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models
-from app.config import STATS_APIKEY
+from app.config import STATS_APIKEY, logger
 
 
 async def get_api_model_items(api_data: list[dict]):
     return [models.ApiDataRow(**api_row) for api_row in api_data]
 
 
-async def get_stats() -> list[dict]:
-    async with httpx.AsyncClient() as cli:
-        resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': STATS_APIKEY})
-        return resp.json()
+async def get_stats() -> list[dict] | None:
+    try:
+        async with httpx.AsyncClient() as cli:
+            resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': STATS_APIKEY})
+            return resp.json()
+    except Exception as error:
+        logger.error(error)
+        return None
 
 
 @dataclasses.dataclass

@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+import aiofiles
+from fastapi import UploadFile
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -11,7 +13,16 @@ ENCODING = 'latin-1'
 DELIMITER = ','
 
 
-def add_targets_to_db(source_name: str, lang: str, input_file_name: str) -> None:
+async def write_file(file: UploadFile) -> Path:
+    path = Path(TARGETS_FOLDER, file.filename)
+    logger.info(f'writing file {path}')
+    async with aiofiles.open(path, 'wb') as f:
+        await f.write(await file.read())
+    logger.info(f'saved file {path}')
+    return path
+
+
+def add_targets_to_db(source_name: str, lang: str, input_file_name: str | Path) -> None:
     path_to_csv_file_with_emails = Path(TARGETS_FOLDER, input_file_name)
     with database.create_sync_session() as db_session:
         source = __get_or_create_source(db_session, lang, source_name)

@@ -1,13 +1,10 @@
-from pathlib import Path
-
-import aiofiles
 import redis.asyncio
 from fastapi import APIRouter, Depends, Response, HTTPException, File, UploadFile, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app import models, database, service, config
-from app.config import REDIS_PASSWORD, REDIS_PORT, REDIS_HOST, logger
+from app import models, database, service
+from app.config import REDIS_PASSWORD, REDIS_PORT, REDIS_HOST
 from . import utils
 
 redis_cli = redis.asyncio.Redis(password=REDIS_PASSWORD, port=REDIS_PORT, host=REDIS_HOST)
@@ -20,18 +17,9 @@ router = APIRouter(
 
 @router.post('/files')
 async def upload_file(tasks: BackgroundTasks, source_name=File(...), lang=File(...), file: UploadFile = File(...)):
-    path = await write_file(file)
+    path = await utils.write_file(file)
     tasks.add_task(utils.add_targets_to_db, source_name, lang, path)
     return True
-
-
-async def write_file(file: UploadFile):
-    path = Path(config.TARGETS_FOLDER, file.filename)
-    logger.info(f'writing file {path}')
-    async with aiofiles.open(path, 'wb') as f:
-        await f.write(await file.read())
-    logger.info(f'saved file {path}')
-    return path
 
 
 @router.get('')

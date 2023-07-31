@@ -4,6 +4,7 @@ import pathlib
 
 import loguru
 from dotenv import load_dotenv
+from notifiers.logging import NotificationHandler
 
 load_dotenv()
 config = configparser.ConfigParser()
@@ -40,3 +41,5 @@ BITLY_KEY = environ['BITLY_KEY']
 STATS_APIKEY = environ['STATS_APIKEY']
 
 logger = loguru.logger
+logging_handler = NotificationHandler('telegram')
+logger.add(logging_handler, level='ERROR')
