@@ -66,6 +66,7 @@ services:
       - ./targets:/targets
     depends_on:
       - cache
+      - stats
   nginx:
     image: nginx:latest
     restart: always
