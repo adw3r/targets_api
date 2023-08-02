@@ -1,4 +1,5 @@
 /.idea
+/kubernetes
 /venv
 /postgres-data
 /redis

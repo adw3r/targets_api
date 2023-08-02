@@ -20,8 +20,8 @@ async def get_stats() -> list[dict] | None:
             resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': STATS_APIKEY})
             return resp.json()
     except Exception as error:
-        logger.error(error)
-        return None
+        logger.error(f'{resp.text[:30]}')
+        logger.exception(error)
 
 
 @dataclasses.dataclass
