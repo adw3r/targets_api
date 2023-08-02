@@ -6,7 +6,7 @@ from app import models, database, stats
 @pytest.mark.asyncio
 async def test_retrieve_api_data_into_database():
     api_data: list[dict] = await stats.service.get_stats()
-    data_objects: list[models.ApiDataRow] = await stats.service.get_api_model_items(api_data)
+    data_objects: list[models.ApiDataRow] = await stats.service.__get_api_model_items(api_data)
     for row in data_objects:
         assert type(row) is models.ApiDataRow
 

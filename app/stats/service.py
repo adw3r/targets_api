@@ -1,6 +1,8 @@
 import dataclasses
 import datetime
 import re
+import textwrap
+from typing import Callable, Coroutine
 
 import httpx
 from sqlalchemy import select, text, delete, func, extract
@@ -10,18 +12,32 @@ from app import models
 from app.config import STATS_APIKEY, logger
 
 
-async def get_api_model_items(api_data: list[dict]):
-    return [models.ApiDataRow(**api_row) for api_row in api_data]
+def __catch_exception(func) -> Callable[[], Coroutine]:
+    async def inner() -> list[dict] | None:
+        try:
+            return await func()
+        except httpx.ReadTimeout as error:
+            logger.error(f'k0d.info ReadTimeout error occurred {textwrap.wrap(str(error))}')
+        except Exception as error:
+            logger.exception(textwrap.wrap(str(error)))
+
+    return inner
 
 
+@__catch_exception
 async def get_stats() -> list[dict] | None:
-    try:
-        async with httpx.AsyncClient() as cli:
-            resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': STATS_APIKEY})
+    async with httpx.AsyncClient() as cli:
+        resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': STATS_APIKEY})
+        if resp.is_success:
+            logger.info(f'get_stats {resp.is_success=}')
             return resp.json()
-    except Exception as error:
-        logger.error(f'{resp.text[:30]}')
-        logger.exception(error)
+        else:
+            logger.error(f'get_stats {resp.is_success=}')
+            return
+
+
+async def __get_api_model_items(api_data: list[dict]):
+    return [models.ApiDataRow(**api_row) for api_row in api_data]
 
 
 @dataclasses.dataclass
@@ -98,4 +114,3 @@ async def get_regs_stat_for_specific_date(session: AsyncSession, date: str) -> l
 
 async def get_all_donors(session: AsyncSession) -> list[models.SpamDonor]:
     return [spam_donor for spam_donor in await session.scalars(select(models.SpamDonor))]
-

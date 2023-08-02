@@ -17,11 +17,10 @@ async def delete_api_data(session: AsyncSession) -> None:
     await session.commit()
 
 
-async def get_targets_with_update_sent_counter(session: AsyncSession,
-                                               source: models.Source, limit: int = 1) -> list[models.TargetEmail]:
-    statement = select(models.TargetEmail) \
-        .where(models.TargetEmail.source_id == source.id) \
-        .order_by(models.TargetEmail.sent_counter).limit(limit).with_for_update()
+async def get_targets_with_update_sent_counter(session: AsyncSession, source: models.Source, limit: int = 1) -> list[
+    models.TargetEmail]:
+    statement = select(models.TargetEmail).where(models.TargetEmail.source_id == source.id).order_by(
+        models.TargetEmail.sent_counter).limit(limit).with_for_update()
     targets: models.TargetEmail = await session.scalars(statement)
     targets = targets.all()
     for target in targets:
@@ -32,8 +31,7 @@ async def get_targets_with_update_sent_counter(session: AsyncSession,
 
 
 async def get_available_sources(session: AsyncSession) -> list[models.Source]:
-    stmt = select(models.Source)\
-        .where(models.Source.is_available)
+    stmt = select(models.Source).where(models.Source.is_available)
     return [source for source in await session.scalars(stmt)]
 
 
