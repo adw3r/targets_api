@@ -16,7 +16,7 @@ def inf_check(func: Callable):
     logger.info(f'creating stats update process...')
     while True:
         now = datetime.now()
-        if now.second == 58:
+        if now.second >= 50:
             process = Process(target=func)
             process.start()
             process.join()

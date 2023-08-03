@@ -1,13 +1,13 @@
 import asyncio
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request, Header
 from fastapi.responses import RedirectResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import database, models
 from app import links
-from app.config import logger
+from app.config import logger, TEMPLATES
 from app.stats import service
 
 router = APIRouter(
@@ -51,18 +51,20 @@ async def get_hits(db_session: AsyncSession = Depends(database.create_async_sess
 
 
 @router.get('/regs')
-async def get_regs_stat(time_format: str = 'all', db_session: AsyncSession = Depends(database.create_async_session)):
+async def get_regs_stat(request: Request, hx_request: str | None = Header(None),time_format: str = 'all', db_session: AsyncSession = Depends(database.create_async_session)):
     match service.RegexIn(time_format):
         case r'\d{4}-\d{2}-\d{2}':
             results = await service.get_regs_stat_for_specific_date(db_session, time_format)
             return results
         case 'today':
-            res = await service.get_regs_stat_for_today(db_session)
-            return res
+            results = await service.get_regs_stat_for_today(db_session)
+            return results
         case 'month':
             results = await service.get_regs_stat_for_current_month(db_session)
             return results
         case 'all':
-            res: list[service.RegApiData] = await service.get_api_data(db_session)
-            logger.debug(f'{len(res)}')
-            return res
+            results: list[service.RegApiData] = await service.get_api_data(db_session)
+            context = {'request': request, 'regs': results}
+            if hx_request:
+                return TEMPLATES.TemplateResponse('table.html', context)
+            return TEMPLATES.TemplateResponse('regs.html', context)

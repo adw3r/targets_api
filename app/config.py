@@ -4,6 +4,7 @@ import pathlib
 
 import loguru
 from dotenv import load_dotenv
+from fastapi.templating import Jinja2Templates
 from notifiers.logging import NotificationHandler
 
 load_dotenv()
@@ -26,6 +27,7 @@ else:
     PORT = environ.getint('TEST_PORT', '8281')
 
 POSTGRES_DB = environ['POSTGRES_DB']
+TG_LOGGING_LEVEL = environ['TG_LOGGING_LEVEL']
 POSTGRES_PASSWORD = environ['POSTGRES_PASSWORD']
 POSTGRES_USER = environ['POSTGRES_USER']
 POSTGRES_HOST = environ['POSTGRES_HOST']
@@ -42,4 +44,7 @@ STATS_APIKEY = environ['STATS_APIKEY']
 
 logger = loguru.logger
 logging_handler = NotificationHandler('telegram')
-logger.add(logging_handler, level='ERROR')
+logger.add(logging_handler, level=TG_LOGGING_LEVEL)
+
+templates_dir = pathlib.Path(PACKAGE_FOLDER, 'templates')
+TEMPLATES = Jinja2Templates(directory=templates_dir)

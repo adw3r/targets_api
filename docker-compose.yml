@@ -64,6 +64,7 @@ services:
       - "8181"
     volumes:
       - ./targets:/targets
+      - ./templates:/templates
     depends_on:
       - cache
       - stats

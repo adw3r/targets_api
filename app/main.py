@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from starlette.responses import RedirectResponse
+from fastapi.responses import RedirectResponse
 
 from app import donors, links, referrals, stats, targets, texts
 from app.config import HOST, PORT, DEBUG

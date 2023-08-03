@@ -19,7 +19,7 @@ def __catch_exception(func) -> Callable[[], Coroutine]:
         except httpx.ReadTimeout as error:
             logger.error(f'k0d.info ReadTimeout error occurred {textwrap.wrap(str(error))}')
         except Exception as error:
-            logger.exception(textwrap.wrap(str(error)))
+            logger.error(f'Unexpected exception {type(error).__name__}')
 
     return inner
 
@@ -30,10 +30,11 @@ async def get_stats() -> list[dict] | None:
         resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': STATS_APIKEY})
         if resp.is_success:
             logger.info(f'get_stats {resp.is_success=}')
-            return resp.json()
-        else:
-            logger.error(f'get_stats {resp.is_success=}')
-            return
+            try:
+                return resp.json()
+            except Exception as error:
+                logger.error(error)
+                return None
 
 
 async def __get_api_model_items(api_data: list[dict]):
