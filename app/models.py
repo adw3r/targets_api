@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import String, ForeignKey, Integer, DateTime
+from sqlalchemy import String, ForeignKey, Integer, DateTime, func
 from sqlalchemy.dialects.postgresql import VARCHAR, SMALLINT, INTEGER, BOOLEAN
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column, Mapped
 
@@ -117,8 +117,8 @@ class Bitly(Base):
 
 class SpamDonor(Base):
     __tablename__ = 'spam_donors'
-    # created_at datetime
-    # modified_at datetime
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
     id: Mapped[int] = mapped_column(INTEGER, primary_key=True)
     success_count: Mapped[int] = mapped_column(INTEGER, server_default='0')

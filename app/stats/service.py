@@ -9,7 +9,19 @@ from sqlalchemy import select, text, delete, func, extract
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models
+from typing import TypedDict
 from app.config import STATS_APIKEY, logger
+
+
+class SpamDonorResultsDict(TypedDict):
+    name: str
+    hits: int
+    regs: int
+    sent_count: int
+
+
+async def get_donors_spam_results(session: AsyncSession) -> list[SpamDonorResultsDict]:
+    raise NotImplementedError
 
 
 def __catch_exception(func) -> Callable[[], Coroutine]:
