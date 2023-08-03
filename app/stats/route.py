@@ -1,7 +1,6 @@
 import asyncio
 
 from fastapi import APIRouter, Depends, Request, Header, HTTPException, status
-from fastapi.responses import RedirectResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,21 +15,16 @@ router = APIRouter(
 )
 
 
-@router.get('')
-async def root_stats():
-    return RedirectResponse('/stats/regs')
-
-
 @router.get('/donors')
 async def donors_stats(db_session: AsyncSession = Depends(database.create_async_session)):
     spam_donors: list[models.SpamDonor] = await service.get_all_donors(db_session)
     return spam_donors
 
 
-@router.get('/donors/results')
+@router.get('')
 async def get_donors_spamming_results(request: Request, rtype: str = 'html',
                                       db_session: AsyncSession = Depends(database.create_async_session)):
-    donors: list[service.SpamDonorResultsDict] = await service.get_donors_spam_results(db_session)
+    donors: list[service.SpamDonorResult] = await service.get_donors_spam_results(db_session)
     match rtype:
         case 'html':
             context = {'request': request, 'donors': donors}
@@ -53,9 +47,9 @@ async def get_all_api_stats(db_session: AsyncSession = Depends(database.create_a
 
 @router.get('/clicks')
 async def get_stats(time_unit: str = 'month',
-                    db_session: AsyncSession = Depends(database.create_async_session)):  # todo
+                    db_session: AsyncSession = Depends(database.create_async_session)):
     spam_donors: list[models.SpamDonor] = await service.get_all_donors(db_session)
-    await asyncio.gather(*[links.get_link_summary(donor, time_unit) for donor in spam_donors])
+    await asyncio.gather(*[links.get_link_summary_for_donor(donor, time_unit) for donor in spam_donors])
     return spam_donors
 
 

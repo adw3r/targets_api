@@ -21,8 +21,7 @@ async def get_targets_with_update_sent_counter(session: AsyncSession, source: mo
     models.TargetEmail]:
     statement = select(models.TargetEmail).where(models.TargetEmail.source_id == source.id).order_by(
         models.TargetEmail.sent_counter).limit(limit).with_for_update()
-    targets: models.TargetEmail = await session.scalars(statement)
-    targets = targets.all()
+    targets: list[models.TargetEmail] = [t for t in await session.scalars(statement)]
     for target in targets:
         target.sent_counter += 1
         session.add(target)

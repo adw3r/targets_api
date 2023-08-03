@@ -2,13 +2,21 @@ import datetime
 
 import pytest
 
-from app import service, database, models
+from app import service, database, models, stats
 from app.config import logger
 
 
 @pytest.fixture
 def db_session():
     return database.create_async_session()
+
+
+@pytest.mark.asyncio
+async def test_get_donors_spam_results(db_session):
+    db_session = await anext(db_session)
+    results = await stats.service.get_donors_spam_results(session=db_session)
+    print(results)
+    # await db_session.close()
 
 
 @pytest.mark.asyncio

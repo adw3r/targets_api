@@ -3,32 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Donors stats</title>
-    <meta http-equiv="refresh" content="60; URL=http://localhost:8181/stats/regs">
+    <meta http-equiv="refresh" content="1">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-<div class="mx-4">
-    <p class="text-2xl font-bold mb-4">
-        Cтатистика за день
-    </p>
-    <table>
-        <thead>
-        <tr>
-            <th>Donor`s name</th>
-            <th>Hits</th>
-            <th>Regs</th>
-        </tr>
-        </thead>
-        <tbody class="text-center text-sm">
-        {% for donor in donors %}
-        <tr>
-            <td class="border">{{ donor.name }}</td>
-            <td class="border">{{ donor.hits }}</td>
-            <td class="border">{{ donor.regs }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+<div class="flex flex-col">
+  <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+      <div class="overflow-hidden">
+        <table class="min-w-full text-center text-sm font-light">
+          <thead class="border-b font-medium dark:border-neutral-500">
+            <tr>
+              <th scope="col" class="px-6 py-4">name</th>
+              <th scope="col" class="px-6 py-4">utm_hits</th>
+              <th scope="col" class="px-6 py-4">regs</th>
+              <th scope="col" class="px-6 py-4">prom_link</th>
+              <th scope="col" class="px-6 py-4">updated_at</th>
+              <th scope="col" class="px-6 py-4">sent_count</th>
+              <th scope="col" class="px-6 py-4">bitly_hits</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for donor in donors %}
+                <tr class="border-b border-primary-200 bg-primary-100 text-neutral-800">
+                  <td class="whitespace-nowrap px-6 py-4">{{ donor.name }}</td>
+                  <td class="whitespace-nowrap px-6 py-4">{{ donor.utm_hits }}</td>
+                  <td class="whitespace-nowrap px-6 py-4">{{ donor.regs }}</td>
+                  <td class="whitespace-nowrap px-6 py-4"><a href="http://{{ donor.prom_link }}"/>{{ donor.prom_link }}</td>
+                  <td class="whitespace-nowrap px-6 py-4">{{ donor.updated_at }}</td>
+                  <td class="whitespace-nowrap px-6 py-4">{{ donor.sent_count }}</td>
+                  <td class="whitespace-nowrap px-6 py-4">{{ donor.bitly_hits }}</td>
+                </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
+
 </body>
 </html>

@@ -7,21 +7,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-<div class="mx-4">
-    <p class="text-2xl font-bold mb-4">
-        Email registration table
-    </p>
-    <table>
-        <thead>
-        <tr>
-            <th>Regs amount</th>
-            <th>Date</th>
-        </tr>
-        </thead>
-        <tbody class="text-center text-sm">
-            {% include 'regs_table.html' %}
-        </tbody>
-    </table>
+<div class="flex flex-col">
+    <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div class="overflow-hidden">
+                <div class="mx-4">
+                    <p class="text-2xl font-bold mb-4 text-center">
+                        Email registration table
+                    </p>
+                    <table class="min-w-full text-center text-sm font-light">
+                        <thead class="border-b font-medium dark:border-neutral-500">
+                            <tr>
+                                <th scope="col" class="px-6 py-4">Regs amount</th>
+                                <th scope="col" class="px-6 py-4">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center text-sm">
+                        {% include 'regs_table.html' %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
