@@ -65,7 +65,7 @@ def __catch_exception(func) -> Callable[[], Coroutine]:
 
 @__catch_exception
 async def get_stats() -> list[dict] | None:
-    async with httpx.AsyncClient() as cli:
+    async with httpx.AsyncClient(verify=False) as cli:
         resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': STATS_APIKEY})
         if resp.is_success:
             logger.info(f'get_stats {resp.is_success=}')

@@ -1,3 +1,5 @@
+import asyncio
+
 from app import models, database, links
 from app.stats import service
 
@@ -18,3 +20,7 @@ async def get_link_summary_for_donor(donor: models.SpamDonor | service.SpamDonor
     response = await links.utils.get_link_summary(bitly_link, **kwargs)
     donor.bitly_hits = response.json().get('total_clicks')
     return donor
+
+
+if __name__ == '__main__':
+    asyncio.run(update_api_data())
