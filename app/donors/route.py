@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, Response, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app import models, database, schemas, service
+from app import models, database, schemas, service, config
+
 
 router = APIRouter(
     prefix='/donors',
@@ -16,7 +17,7 @@ async def get_project_info(donor_name: str, db_session: AsyncSession = Depends(d
     if not donor:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail='Donor with name {} not found'.format(donor_name))
-    if donor.fail_count <= -200 and donor.status is True:
+    if donor.fail_count <= config.FAILS_LIMIT and donor.status is True:
         donor.status = False
         db_session.add(donor)
         await db_session.commit()

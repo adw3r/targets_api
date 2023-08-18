@@ -48,3 +48,7 @@ logger.add(logging_handler, level=TG_LOGGING_LEVEL)
 
 templates_dir = pathlib.Path(PACKAGE_FOLDER, 'templates')
 TEMPLATES = Jinja2Templates(directory=templates_dir)
+
+
+FAILS_LIMIT: int = environ.getint('FAILS_LIMIT', -200)
+breakpoint()
