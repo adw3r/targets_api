@@ -1,5 +1,6 @@
 import redis.asyncio
 from fastapi import APIRouter, Depends, Response, HTTPException, File, UploadFile, BackgroundTasks
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -15,10 +16,15 @@ router = APIRouter(
 )
 
 
+class FileProperties(BaseModel):
+    source_name: str
+    lang: str
+
+
 @router.post('/files')
-async def upload_file(tasks: BackgroundTasks, source_name=File(...), lang=File(...), file: UploadFile = File(...)):
+async def upload_file(tasks: BackgroundTasks, properties: FileProperties = Depends(), file: UploadFile = File(...)):
     path = await utils.write_file(file)
-    tasks.add_task(utils.add_targets_to_db, source_name, lang, path)
+    tasks.add_task(utils.add_targets_to_db, properties.source_name, properties.lang, path)
     return True
 
 
