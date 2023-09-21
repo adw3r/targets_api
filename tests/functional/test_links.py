@@ -21,3 +21,7 @@ def test_get_bitly_stats():
     resp = httpx.get(f'http://localhost:{config.PORT}/bitly/link/summary', params=params)
     print(resp.text)
     assert resp.json().get('units') is not None
+
+
+def test_get_all_bitly_links():
+    ...
