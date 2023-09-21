@@ -53,7 +53,7 @@ async def create_link_straight(link, db_session: AsyncSession = Depends(database
 
 
 @router.get('/link/summary')
-async def get_link_summary(link_id, db_session: AsyncSession = Depends(database.create_async_session)):  # todo tests
+async def get_link_summary(link_id, db_session: AsyncSession = Depends(database.create_async_session)):
     response: httpx.Response = await links.get_link_summary(link_id)
     response_json = response.json()
     bitly_instance = await db_session.scalar(select(models.Bitly).where(models.Bitly.link_id == link_id))
@@ -62,6 +62,6 @@ async def get_link_summary(link_id, db_session: AsyncSession = Depends(database.
 
 
 @router.get('/all')
-async def get_all_bitly_links(db_session: AsyncSession = Depends(database.create_async_session)):  # todo tests
+async def get_all_bitly_links(db_session: AsyncSession = Depends(database.create_async_session)):
     result = await db_session.scalars(select(models.Bitly))
     return result.all()
