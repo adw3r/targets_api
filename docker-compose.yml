@@ -8,12 +8,6 @@ services:
     restart: always
     env_file:
       - .env
-#    environment:
-#      - POSTGRES_HOST=10.107.8.10
-#      - POSTGRES_DB=targets
-#      - POSTGRES_PASSWORD=postgres
-#      - POSTGRES_USER=postgres
-#      - POSTGRES_PORT=5432
     ports:
       - "5432:5432"
     volumes:
@@ -31,7 +25,7 @@ services:
     depends_on:
       - db
   stats:
-    image: alexeynaidiuk/targets-api:${TAG}
+    image: alexeynaidiuk/targets-api:latest
     build: .
     restart: always
     env_file:
@@ -44,7 +38,7 @@ services:
       - db
     command: "python3 -m app.stats"
   cache:
-    image: alexeynaidiuk/targets-api:${TAG}
+    image: alexeynaidiuk/targets-api:latest
     build: .
     restart: always
     env_file:
@@ -57,7 +51,7 @@ services:
       - redis
     command: "python3 -m app.cache"
   targets-api:
-    image: alexeynaidiuk/targets-api:${TAG}
+    image: alexeynaidiuk/targets-api:latest
     build: .
     restart: always
     env_file:

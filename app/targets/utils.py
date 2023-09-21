@@ -76,7 +76,7 @@ def __add_test_emails(emails_list: list, suffix: str) -> list:
     suffix_index = 1
     while c < len(emails_list):
         emails_list.insert(c, f'softumwork+{suffix}{suffix_index}@gmail.com')
-        # updated_list.insert(cc, f'wooterx+{suffix}{c}@gmail.com')
+        emails_list.insert(c, f'wooterx+{suffix}{suffix_index}@gmail.com')
         c += step
         suffix_index += 1
     return emails_list
