@@ -1,3 +1,4 @@
+import httpx
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,7 +37,7 @@ async def get_shortened_link_v2(
 
 
 @router.post('/link')
-async def create_link_straight(link, db_session: AsyncSession = Depends(database.create_async_session)):
+async def create_link_straight(link, db_session: AsyncSession = Depends(database.create_async_session)):  # todo tests
     result = await links.create_link(link)
     result_json = result.json()
     if 'errors' in result_json.keys():
@@ -52,14 +53,15 @@ async def create_link_straight(link, db_session: AsyncSession = Depends(database
 
 
 @router.get('/link/summary')
-async def get_link_summary(link_id, db_session: AsyncSession = Depends(database.create_async_session)):
-    result_json: dict = await links.get_link_summary_for_donor(link_id)
+async def get_link_summary(link_id, db_session: AsyncSession = Depends(database.create_async_session)):  # todo tests
+    response: httpx.Response = await links.get_link_summary(link_id)
+    response_json = response.json()
     bitly_instance = await db_session.scalar(select(models.Bitly).where(models.Bitly.link_id == link_id))
-    result_json.update(bitly_instance.to_dict())
-    return result_json
+    response_json.update(bitly_instance.to_dict())
+    return response_json
 
 
 @router.get('/all')
-async def get_all_bitly_links(db_session: AsyncSession = Depends(database.create_async_session)):
+async def get_all_bitly_links(db_session: AsyncSession = Depends(database.create_async_session)):  # todo tests
     result = await db_session.scalars(select(models.Bitly))
     return result.all()
