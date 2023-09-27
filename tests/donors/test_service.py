@@ -10,4 +10,5 @@ async def test_get_donors_spam_results():
         print(results)
         assert type(results) is list
         for item in results:
+            print(item.updated_at)
             assert type(item) is models.SpamDonor
