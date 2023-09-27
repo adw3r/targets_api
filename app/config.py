@@ -51,3 +51,4 @@ TEMPLATES = Jinja2Templates(directory=templates_dir)
 
 
 FAILS_LIMIT: int = environ.getint('FAILS_LIMIT', -200)
+CACHE_AMOUNT = environ.getint('CACHE_AMOUNT', 10000)

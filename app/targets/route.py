@@ -8,7 +8,7 @@ from app import models, database, service
 from app.config import REDIS_PASSWORD, REDIS_PORT, REDIS_HOST
 from . import utils
 
-redis_cli = redis.asyncio.Redis(password=REDIS_PASSWORD, port=REDIS_PORT, host=REDIS_HOST)
+redis_cli = redis.asyncio.Redis(password=REDIS_PASSWORD, port=REDIS_PORT, host=REDIS_HOST, max_connections=10000)
 
 router = APIRouter(
     prefix='/targets',
@@ -48,5 +48,5 @@ async def get_factory_pool(pool: str, method: str = 'info',
         case 'pop':
             target = await redis_cli.lpop(pool)
             if not target:
-                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
             return Response(content=target)

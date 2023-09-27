@@ -7,7 +7,6 @@ import redis
 from app import database, models, config
 from app.config import logger
 
-CACHE_AMOUNT = 10000
 
 redis_cli = redis.Redis(password=config.REDIS_PASSWORD, port=config.REDIS_PORT, host=config.REDIS_HOST)
 caching_processes: list[multiprocessing.Process] = []
@@ -24,7 +23,7 @@ def create_cache():
     caching_processes.append(cache_process)
 
 
-def get_targets_list_from_source_to_cache(source: models.Source, limit: int = CACHE_AMOUNT):
+def get_targets_list_from_source_to_cache(source: models.Source, limit: int = config.CACHE_AMOUNT):
     with database.create_sync_session() as session:
         targets_list = session.query(models.TargetEmail) \
             .where(models.TargetEmail.source_id == source.id) \
@@ -60,9 +59,9 @@ def check_that_cache_is_not_empty():
         for source in sources:
             current_cache_amount = redis_cli.llen(source.source_name)
             logger.info(f'{current_cache_amount, source}')
-            if current_cache_amount < CACHE_AMOUNT and source.source_name not in [t.name for t in active_threads]:
-                thread = Thread(target=get_targets_list_from_source_to_cache, args=(source, CACHE_AMOUNT),
+            if current_cache_amount < config.CACHE_AMOUNT and source.source_name not in [t.name for t in active_threads]:
+                thread = Thread(target=get_targets_list_from_source_to_cache, args=(source, config.CACHE_AMOUNT / 4),
                                 name=source.source_name)
                 thread.start()
                 active_threads.append(thread)
-        time.sleep(2)
+        time.sleep(0.5)

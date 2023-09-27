@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   db:
-    image: postgres:15-alpine
+    image: postgres:15
     networks:
       - mynetwork
     restart: always
@@ -51,6 +51,9 @@ services:
       - redis
     command: "python3 -m app.cache"
   targets-api:
+    deploy:
+      replicas: 6
+    command: uvicorn app.main:app --host=$HOST --port=$PORT
     image: alexeynaidiuk/targets-api:latest
     build: .
     restart: always
