@@ -2,8 +2,7 @@ from fastapi import APIRouter, Depends, Response, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app import models, database, schemas, service, config
-
+from app import models, database, schemas, service, config, donors
 
 router = APIRouter(
     prefix='/donors',
@@ -17,6 +16,12 @@ async def status_control(db_session: AsyncSession, donor: models.SpamDonor):
         db_session.add(donor)
         await db_session.commit()
         await db_session.refresh(donor)
+
+
+@router.get('/')
+async def get_donors(db_session: AsyncSession = Depends(database.create_async_session)):
+    results = await donors.service.get_all_donors(db_session)
+    return results
 
 
 @router.get('/{donor_name}')

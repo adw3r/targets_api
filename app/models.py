@@ -130,6 +130,12 @@ class SpamDonor(Base):
     referral_name: Mapped[str] = mapped_column(VARCHAR(40), nullable=False)
     targets_source: Mapped[str] = mapped_column(VARCHAR(40), nullable=False)
 
+    def __repr__(self):
+        return (f'{type(self).__name__}(donor_name={self.donor_name!r},'
+                f' prom_link={self.prom_link!r},'
+                f' targets_source={self.targets_source!r}'
+                f')')
+
     def update(self, **kwargs):
         success_count = kwargs.get('success_count')
         if success_count:
@@ -185,7 +191,7 @@ class ApiDataRow(Base):
         super().__init__(**kw)
 
     def __repr__(self):
-        return f'ApiDataRow(utm_source' \
+        return f'ApiDataRow(' \
                f'utm_campaign={self.utm_campaign}' \
                f'utm_term={self.utm_term}' \
                f'utm_content={self.utm_content}' \
