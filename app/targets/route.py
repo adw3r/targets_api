@@ -10,10 +10,7 @@ from . import utils
 
 redis_cli = redis.asyncio.Redis(password=REDIS_PASSWORD, port=REDIS_PORT, host=REDIS_HOST, max_connections=10000)
 
-router = APIRouter(
-    prefix='/targets',
-    tags=['Targets']
-)
+router = APIRouter(prefix='/targets', tags=['Targets'])
 
 
 class FileProperties(BaseModel):
