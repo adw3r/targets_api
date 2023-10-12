@@ -51,8 +51,6 @@ services:
       - redis
     command: "python3 -m app.cache"
   targets-api:
-    deploy:
-      replicas: 5
     command: uvicorn app.main:app --host=$HOST --port=$PORT
     image: alexeynaidiuk/targets-api:latest
     build: .
