@@ -2,7 +2,7 @@ from locust import HttpUser, task
 
 
 class QuickstartUser(HttpUser):
-    host = "http://10.107.8.10:8181"
+    host = "http://127.0.0.1:8181"
 
     @task
     def test_get_target(self):

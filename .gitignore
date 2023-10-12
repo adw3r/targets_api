@@ -9,3 +9,6 @@
 /redis/
 /rebuild_targets_api.bat
 /original_targets/
+/dump_db.bat
+/postgres-dump.sql
+/restore_db.bat

@@ -1,17 +1,17 @@
 version: "3.8"
 
 services:
-  db:
-    image: postgres:15
-    networks:
-      - mynetwork
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+#  db:
+#    image: postgres:15
+#    networks:
+#      - mynetwork
+#    restart: always
+#    env_file:
+#      - .env
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - ./postgres-data:/var/lib/postgresql/data
   redis:
     image: redis:7-alpine
     networks:
@@ -22,8 +22,8 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes:
       - ./redis:/data
-    depends_on:
-      - db
+#    depends_on:
+#      - db
   stats:
     image: alexeynaidiuk/targets-api:latest
     build: .
@@ -34,8 +34,8 @@ services:
       - DEBUG=false
     networks:
       - mynetwork
-    depends_on:
-      - db
+#    depends_on:
+#      - db
     command: "python3 -m app.stats"
   cache:
     image: alexeynaidiuk/targets-api:latest
@@ -52,7 +52,7 @@ services:
     command: "python3 -m app.cache"
   targets-api:
     deploy:
-      replicas: 6
+      replicas: 5
     command: uvicorn app.main:app --host=$HOST --port=$PORT
     image: alexeynaidiuk/targets-api:latest
     build: .
@@ -72,7 +72,7 @@ services:
       - cache
       - stats
   nginx:
-    image: nginx:latest
+    image: nginx:1.24.0-alpine
     restart: always
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
