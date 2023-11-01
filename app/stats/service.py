@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models
 from app.config import STATS_APIKEY, logger
-from . import utils
+from app.stats import utils
 
 
 class SpamDonorResult:
@@ -52,9 +52,9 @@ async def get_donors_spam_results(session: AsyncSession) -> list[SpamDonorResult
 
 
 def __catch_exception(func) -> Callable[[], Coroutine]:
-    async def inner() -> list[dict] | None:
+    async def inner(*args, **kwargs) -> list[dict] | None:
         try:
-            return await func()
+            return await func(*args, **kwargs)
         except httpx.ReadTimeout as error:
             logger.error(f'k0d.info ReadTimeout error occurred {textwrap.wrap(str(error))}')
         except Exception as error:
@@ -64,9 +64,9 @@ def __catch_exception(func) -> Callable[[], Coroutine]:
 
 
 @__catch_exception
-async def get_stats() -> list[dict] | None:
+async def get_stats(period: int = 5) -> list[dict] | None:
     async with httpx.AsyncClient(verify=False) as cli:
-        resp = await cli.get('https://k0d.info/aff.php', headers={'Apikey': STATS_APIKEY})
+        resp = await cli.get(f'https://k0d.info/aff.php?period={period}', headers={'Apikey': STATS_APIKEY})
         if resp.is_success:
             logger.info(f'get_stats {resp.is_success=}')
             try:
