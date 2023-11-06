@@ -125,8 +125,8 @@ class SpamDonor(Base):
     fail_count: Mapped[int] = mapped_column(INTEGER, server_default='0')
     status: Mapped[bool] = mapped_column(BOOLEAN, server_default='true')
 
-    donor_name: Mapped[str] = mapped_column(VARCHAR(20), nullable=False, unique=True)
-    prom_link: Mapped[str] = mapped_column(VARCHAR(22), nullable=False)
+    donor_name: Mapped[str] = mapped_column(VARCHAR(128), nullable=False, unique=True)
+    prom_link: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
     referral_name: Mapped[str] = mapped_column(VARCHAR(40), nullable=False)
     targets_source: Mapped[str] = mapped_column(VARCHAR(40), nullable=False)
 
