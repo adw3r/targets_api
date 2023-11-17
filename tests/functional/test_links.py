@@ -28,5 +28,5 @@ def test_set_status_for_all_donors():
         'status': 'true',
     }
 
-    response = httpx.patch('http://127.0.0.1:8181/donors/test/status', params=params)
+    response = httpx.patch('http://127.0.0.1:8181/donors/all/status', params=params)
     print(response.text)
