@@ -4,8 +4,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import models
 
 
-async def get_donors_with_false_status(session: AsyncSession) -> list[models.SpamDonor]:
-    return list(await session.scalars(select(models.SpamDonor).where(models.SpamDonor.fail_count > 200)))
+async def get_donors_with_false_status(session: AsyncSession) -> tuple[models.SpamDonor]:
+    result = tuple(
+        await session.scalars(
+            select(models.SpamDonor).where(models.SpamDonor.status == False)
+        )
+    )
+    return result
 
 
 async def get_donor_by_name(session: AsyncSession, donor_name: str) -> models.SpamDonor:

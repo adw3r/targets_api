@@ -55,8 +55,8 @@ async def update_status(donor_name: str, status: bool,
             donor.status = status
             donor.fail_count = 0
             db_session.add(donor)
+            await db_session.commit()
             await db_session.refresh(donor)
-        await db_session.commit()
         return donors
     else:
         donor_instance: models.SpamDonor = await service.get_donor_by_name(db_session, donor_name)
