@@ -12,3 +12,4 @@
 /dump_db.bat
 /postgres-dump.sql
 /restore_db.bat
+test.env

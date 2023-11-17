@@ -22,7 +22,7 @@ async def write_file(file: UploadFile) -> Path:
     return path
 
 
-def add_targets_to_db(source_name: str, lang: str, input_file_name: str | Path) -> None:
+def add_targets_to_db(source_name: str, lang: str, input_file_name: str | Path) -> str:
     path_to_csv_file_with_emails = Path(TARGETS_FOLDER, input_file_name)
     with database.create_sync_session() as db_session:
         source = __get_or_create_source(db_session, lang, source_name)
@@ -42,6 +42,7 @@ def add_targets_to_db(source_name: str, lang: str, input_file_name: str | Path) 
         logger.info(f'added {source_name} {len(emails_)}')
         os.remove(temp_file_path)
         logger.success(f'removed {temp_file_path}')
+        return f'removed {temp_file_path}'
     else:
         logger.error(f'{source_name} {copy_res=}')
 

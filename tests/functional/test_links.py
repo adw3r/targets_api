@@ -23,5 +23,10 @@ def test_get_bitly_stats():
     assert resp.json().get('units') is not None
 
 
-def test_get_all_bitly_links():
-    ...
+def test_set_status_for_all_donors():
+    params = {
+        'status': 'true',
+    }
+
+    response = httpx.patch('http://127.0.0.1:8181/donors/test/status', params=params)
+    print(response.text)

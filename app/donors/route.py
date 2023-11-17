@@ -49,15 +49,28 @@ async def get_project_info(donor_name: str, db_session: AsyncSession = Depends(d
 @router.patch('/{donor_name}/status')
 async def update_status(donor_name: str, status: bool,
                         db_session: AsyncSession = Depends(database.create_async_session)):
-    donor_instance: models.SpamDonor = await service.get_donor_by_name(db_session, donor_name)
-    if not donor_instance:
-        raise HTTPException(detail=f'donor {donor_name} was not found!', status_code=404)
-    donor_instance.status = status
-    donor_instance.fail_count = 0
-    db_session.add(donor_instance)
-    await db_session.commit()
-    await db_session.refresh(donor_instance)
-    return donor_instance
+    if donor_name == 'all':
+        donors = await service.get_donors_with_false_status(session=db_session)
+        for donor in donors:
+            donor.status = status
+            donor.fail_count = 0
+            db_session.add(donor)
+            await db_session.refresh(donor)
+        await db_session.commit()
+        return donors
+    else:
+        donor_instance: models.SpamDonor = await service.get_donor_by_name(db_session, donor_name)
+        if not donor_instance:
+            raise HTTPException(detail=f'donor {donor_name} was not found!', status_code=404)
+        donor_instance.status = status
+        if status:
+            donor_instance.fail_count = 0
+        else:
+            donor_instance.fail_count = 300
+        db_session.add(donor_instance)
+        await db_session.commit()
+        await db_session.refresh(donor_instance)
+        return donor_instance
 
 
 @router.patch('/{donor_name}/counters')
